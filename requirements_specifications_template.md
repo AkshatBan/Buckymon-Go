@@ -323,5 +323,43 @@ deactivate DjangoBackend
 - Blank Lines: Use blank lines to separate logical blocks in methods
 inspired by: "https://google.github.io/styleguide/pyguide.html"
 
+### Comment Blocks
+Write a big comment block at the start of each function in the following format:
+```
+/*
+* What this function does
+* What this function does
+* Params and info about them
+* Return value and how it is intended to be used
+*/
+```
+The * character acts like a bullet point and this way we will be easily able to understand other people's functions in a black. box way.
+
+If your function is long in length then adding smaller comment blocks at the start of each segment is highly recommended; for example:
+```
+function abc(x, y, z){
+    //The code below gets image from the camera
+    --------------
+    --------------
+    --------------
+    --------------
+    --------------
+
+    //The segment handles moving the data to the DjangoBackend
+    --------------
+    --------------
+    --------------
+    --------------
+    --------------
+
+    //The final segment is responsible for moving the backend processed data to the ReactFrontend
+    --------------
+    --------------
+    --------------
+    --------------
+    return value;
+}
+```
+
 
 <!--Here you can document your coding standards and conventions. This includes decisions about naming, style guides, etc.-->
