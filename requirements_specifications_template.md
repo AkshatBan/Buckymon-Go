@@ -310,6 +310,11 @@ DjangoBackend -->> ReactFrontend: JSON Response
 deactivate DjangoBackend
 ```
 
-### Standards & Conventions
+## Standards & Conventions
+
+### Variable Naming Convention 
+- Variable Names: Are to be defined with snake case with lower case letters for example `let geolocation_from_user = 10;`
+- Function Names: Are to follow the same snake case with _ seperator but the start of each word should be capitalized for example: `def Get_User_Info:`
+
 
 <!--Here you can document your coding standards and conventions. This includes decisions about naming, style guides, etc.-->
