@@ -316,5 +316,12 @@ deactivate DjangoBackend
 - Variable Names: Are to be defined with snake case with lower case letters for example `let geolocation_from_user = 10;`
 - Function Names: Are to follow the same snake case with _ seperator but the start of each word should be capitalized for example: `def Get_User_Info:`
 
+### White Space / Line Length Convention
+- Line Limit: Line length is not to exceed 80 charachters
+- Whitespace Around Operators: Surround assignment(=) and boolean operators with one space on either side 
+- Indentation: Use 4 spaces for Indentation
+- Blank Lines: Use blank lines to separate logical blocks in methods
+inspired by: "https://google.github.io/styleguide/pyguide.html"
+
 
 <!--Here you can document your coding standards and conventions. This includes decisions about naming, style guides, etc.-->
