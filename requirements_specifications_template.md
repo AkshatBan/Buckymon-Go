@@ -8,9 +8,13 @@
 
 <!--A one paragraph summary of what the software will do.-->
 
-This is an example paragraph written in markdown. You can use *italics*, **bold**, and other formatting options. You can also <u>use inline html</u> to format your text. The example sections included in this document are not necessarily all the sections you will want, and it is possible that you won't use all the one's provided. It is your responsibility to create a document that adequately conveys all the information about your project specifications and requirements.
+geocaching app with added game element, with a focus on UW-Madison events/activities
 
-Please view this file's source to see `<!--comments-->` with guidance on how you might use the different sections of this document. 
+Create an application to allow users to play “Buckymon Go!” This game would require users to go to various real world locations / events around the UW-Madison campus to earn points for capturing pictures (and possibly performing some mini-game task) at these locations / events. (Ideally, GPS would be used so that the users could capture/collect virtual things that exist only in proximity to the "target" coordinates. Another possibility: Use image analysis to automatically confirm that the picture they've taken corresponds to the objective.)
+
+Users should earn points for achieving goals in the app and should have a saved library of all their accomplishments. The game should have a server that can service multiple users simultaneously.
+
+Stretch: An interface where people holding events can enter a request to have a BG goal at their event; and a corresponding admin interface for processing those requests.
 
 ### Customer
 
@@ -20,15 +24,19 @@ Please view this file's source to see `<!--comments-->` with guidance on how you
 
 <!--This section lists the behavior that the users see. This information needs to be presented in a logical, organized fashion. It is most helpful if this section is organized in outline form: a bullet list of major topics (e.g., one for each kind of user, or each major piece of system functionality) each with some number of subtopics.-->
 
-Here is a user requirements sample from [Crookshanks](https://learning-oreilly-com.ezproxy.library.wisc.edu/library/view/practical-software-development/9781484206201/9781484206218_Ch02.xhtml):
-
 | ID   | Description                                                  | Priority | Status |
 | ---- | ------------------------------------------------------------ | -------- | ------ |
-| R11  | Users should not have to sign into the system; their current network login should be used for identification. | Med      | Done   |
-| R12  | The user should pick a project first; the tasks available are a derivative of the project. | High     | Open   |
-| R13  | A full-time employee should not be able to submit a time card with less than 40 hours per week recorded. | High     | Open   |
-| R14  | A contractor can submit any number of hours up to 60 without special approval. | Med      | Open   |
-| R15  | A team lead can see his/her team's time cards before they are submitted but cannot approve them until the user submits it. | High     | Open   |
+| R11  | Users should have to sign into the system; their google acount should be used for identification. | Low - Med      | Open   |
+| R12  | The user should be able to see a map of their sorrounding area with markers for nearby areas with activities. | High     | Open   |
+| R13  | The user should be able to select a marker on map and be able to see the activity as well as directions to the marker. Directions should be verified from a few different locations from campus to verify directions. | High     | Open   |
+| R14  | A full-time employee should not be able to submit a time card with less than 40 hours per week recorded. | High     | Open   |
+| R15  | A user should be authenticated as having "Done" the activity with either geolocation proximity | High      | Open   |
+| R16  | A user should be authenticated as having "Done" the activity with IMAGE analysis | Low      | Open   |
+| R17  | Physically place certain minigames in these areas around campus for minigames | High     | Open   |
+| R18  | A section or tab in the web app where users are able to see their past completed history | High     | Open   |
+| R19  | A section or tab in the web app where users are able to see their past completed history | High     | Open   |
+| R20  | Have the backend handle multiple users intereacting with the app at the same time | High     | Open   |
+| R21  | Have the backend service scale with Kubernetes depending on the load | Low     | Open   |
 
 <div align="center"><small><i>Excerpt from Crookshanks Table 2-2 showing example user requirements for a timekeeping system</i></small></div>
 
