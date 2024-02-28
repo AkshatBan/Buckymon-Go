@@ -14,7 +14,7 @@
 
 ## Initial Roles For Each Team Member
 
-   Grant Hall: Frontend
+   Grant Hall: Frontend/Database
    <br>
    <br>
    Agastya Asthana: Frontend
@@ -29,4 +29,4 @@
    Louis Digon: Backend
    <br>
    <br>
-   Akshat Bansal: Backend/Frontend
+   Akshat Bansal: Backend/Database
