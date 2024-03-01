@@ -125,43 +125,15 @@ B <-->|SQLAlchemy| C
 
 #### Database
 
-```mermaid
----
-title: Sample Database ERD for an Order System
----
-erDiagram
-    Customer ||--o{ Order : "placed by"
-    Order ||--o{ OrderItem : "contains"
-    Product ||--o{ OrderItem : "included in"
+Database schema based on ER-Diagram (bold for primary key, italics for foreign key)
 
-    Customer {
-        int customer_id PK
-        string name
-        string email
-        string phone
-    }
+User(**user_id**, name, score)  
+Achievements(**achievement_id**, a_name, a_description, a_score)  
+Achieved(**user_id**, **achievement_id**)  
+Events(**event_id**, _location_id_, e_name, e_score)  
+Completed(**user_id**, **event_id**)  
+Locations(**location_id** lat, long, l_name)
 
-    Order {
-        int order_id PK
-        int customer_id FK
-        string order_date
-        string status
-    }
-
-    Product {
-        int product_id PK
-        string name
-        string description
-        decimal price
-    }
-
-    OrderItem {
-        int order_item_id PK
-        int order_id FK
-        int product_id FK
-        int quantity
-    }
-```
 
 #### Class Diagram
 
