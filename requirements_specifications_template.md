@@ -275,7 +275,7 @@ function abc(x, y, z){
 ```
 
 ### Branch Naming Convention
-When creating a new branch use the following convention, initial + forward slash + name of feauture. For example, `AA/GeolocationAPI` for user Agastya Asthana
+When creating a new branch use the following convention, initial + forward slash + name of feauture. For example, `AA/issue4` for user Agastya Asthana working on Issue #4.
 
 
 <!--Here you can document your coding standards and conventions. This includes decisions about naming, style guides, etc.-->
