@@ -1,5 +1,5 @@
 import ReactMapboxGl from "react-mapbox-gl";
-
+// TODO: Merge this in the main branch
 
 function MyMap(){
     const Map = ReactMapboxGl({
@@ -11,7 +11,7 @@ function MyMap(){
             height: '100vh',
             width: '100vw'
         }}
-        center={[-89.401230, 43.073051]} />
+        center={[-89.401230, 43.073051]} /> //TODO: Make this to the user location
     );
 }
 
