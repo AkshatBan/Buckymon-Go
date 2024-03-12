@@ -8,18 +8,32 @@ app = Flask(__name__)
 
 # Sample location data (will change later)
 location_data = {
-        1 : [37.7749, -122.4194, 'San Francisco'],
-        2 : [34.0522, -118.2437, 'Los Angeles']
+        'locations': {
+            1 : {
+                'long': 37.7749, 
+                'lat': -122.4194,
+                'location_name': 'San Francisco',
+                'event_desc': 'Rave at SF'
+                }
+            2 : {
+                'long': 34.0522, 
+                'lat': -118.2437, 
+                'location_name': 'Los Angeles'
+                'event_desc': 'Stars at LA'
+                }
+        }
 }
+
 # May create a method that queries the event data from the database once setup.
 
-# Gets data from database, packages it into JSON format, and sent to frontend.
-@app.route('/api/Get_Data', methods=['GET'])
-def Get_Data():
+# Retrieves data from database, packages it into JSON format, and sent to frontend.
+@app.route('/api/Post_Data_To_Frontend', methods=['POST'])
+def Post_Data_To_Frontend():
     # Extract event data from database.
-    query = 'SELECT * FROM your_table_name' # will replace with actual database name
-    # Format event data into a tuple.
-    data = 
+    # query = 'SELECT * FROM your_table_name' # will replace with actual database name
+    
+    # Initialize data for
+    data = location_data
 
     # Package event data in JSON.
 
@@ -28,8 +42,8 @@ def Get_Data():
         return jsonify(data)
 
 # Receives the data from the frontend. When user clicks "Complete Event" button, this method will retrieve all event details, including the name, id, and location and stores it into the database.
-@app.route('/api/Receive_Data', methods = ['POST'])
-def Receive_Data():
+@app.route('/api/Get_Data_From_Frontend', methods = ['GET'])
+def Get_Data_From_Frontend():
     # Gets the data from the request upon user completing an event in JSON format.
     
     # Process the data and store to the database.
