@@ -2,32 +2,37 @@
 
 # Imports necessary Flask modules
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 # Creates a Flask application
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+
+
 
 # Sample location data (will change later)
-location_data = {
-        'locations': {
-            1 : {
-                'long': 37.7749, 
-                'lat': -122.4194,
-                'location_name': 'San Francisco',
-                'event_desc': 'Rave at SF'
-                }
-            2 : {
-                'long': 34.0522, 
-                'lat': -118.2437, 
-                'location_name': 'Los Angeles'
-                'event_desc': 'Stars at LA'
-                }
-        }
-}
+location_data = [
+            {   
+                'id': 1,
+                'long': -89.408, 
+                'lat': 43.0719,
+                'location_name': 'Union South',
+                'event_desc': 'description'
+            },
+            {
+                'id': 2,
+                'long': -89.4040, 
+                'lat': 43.0757, 
+                'location_name': 'Bascom Hall',
+                'event_desc': 'something'
+            }
+
+]
 
 # May create a method that queries the event data from the database once setup.
 
 # Retrieves data from database, packages it into JSON format, and sent to frontend.
-@app.route('/api/Post_Data_To_Frontend', methods=['POST'])
+@app.route('/api/Post_Data_To_Frontend', methods=['GET'])
 def Post_Data_To_Frontend():
     # Extract event data from database.
     # query = 'SELECT * FROM your_table_name' # will replace with actual database name
@@ -42,8 +47,13 @@ def Post_Data_To_Frontend():
         return jsonify(data)
 
 # Receives the data from the frontend. When user clicks "Complete Event" button, this method will retrieve all event details, including the name, id, and location and stores it into the database.
-@app.route('/api/Get_Data_From_Frontend', methods = ['GET'])
+@app.route('/api/Get_Data_From_Frontend', methods = ['GET', 'POST'])
 def Get_Data_From_Frontend():
+        # Access the JSON data from the request body
+    data = request.json
+    print(request.json)
+    print("Received JSON data:", data)
+    return jsonify({"message": "Data received successfully"}), 200
     # Gets the data from the request upon user completing an event in JSON format.
     
     # Process the data and store to the database.
@@ -53,5 +63,5 @@ def Get_Data_From_Frontend():
 
 
 # Runs the Flask application.
-if __name__ == '__main__':
-    app.run(debug = True)
+    if __name__ == '__main__':
+        app.run(debug = True)

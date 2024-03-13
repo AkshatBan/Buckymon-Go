@@ -7,11 +7,29 @@ function MyMap(){
 
     // const [selected_Marker, Set_Selected_Marker] = React.useState(null);
 
-    const markers = [
-        { id: 1, latitude: 43.0719, longitude: -89.408, message: 'Union South' },
-        { id: 2, latitude: 43.0757, longitude: -89.4040, message: 'Bascom Hall' },
-        { id: 3, latitude: 43.0762, longitude: -89.4000, message: 'Memorial Union' }
-      ];
+    // const markers = [
+    //     { id: 1, latitude: 43.0719, longitude: -89.408, message: 'Union South' },
+    //     { id: 2, latitude: 43.0757, longitude: -89.4040, message: 'Bascom Hall' },
+    //     { id: 3, latitude: 43.0762, longitude: -89.4000, message: 'Memorial Union' }
+    //   ];
+
+    const [markers, Set_Markers] = React.useState();
+
+
+    //fetch location data on component load
+    React.useEffect(() => {
+        fetch("http://127.0.0.1:5000/api/Post_Data_To_Frontend", {
+            method: "GET"
+        })
+        .then(res => {
+            return res.json()
+        })
+        .then(data => {
+            Set_Markers(data);
+        })
+    }, [])
+
+    
 
     return(
         <div>
@@ -26,15 +44,19 @@ function MyMap(){
             style={{width: 1440, height: 700}}
             mapStyle="mapbox://styles/mapbox/streets-v9"
             >
+            {/* for each location, place a marker on the map */}
             {
-                markers.map(marker => (
-                    <MyMarker 
-                        key={marker.id}
-                        latitude={marker.latitude}
-                        longitude={marker.longitude}
-                        message={marker.message}
-                    />                 
-                ))
+                markers ? 
+                        markers.map(marker => (
+                            <MyMarker 
+                                key={marker.id}
+                                latitude={marker.lat}
+                                longitude={marker.long}
+                                message={marker.event_desc}
+                                id={marker.id}
+                            />                 
+                        ))
+                : <></>
             }
             </Map>
         </div>
