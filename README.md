@@ -8,8 +8,8 @@
     Scrum Master: Akshat Bansal
 
  ### Sprint 3
-    Product Owner: Jasper Bo or Jonah Parayil
-    Scrum Master: Jasper Bo or Jonah Parayil
+    Product Owner: Jasper Bo
+    Scrum Master: Jonah Parayil
 
 
 ## Initial Roles For Each Team Member
