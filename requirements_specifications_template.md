@@ -26,17 +26,16 @@ Stretch: An interface where people holding events can enter a request to have a 
 
 | ID   | Description                                                  | Priority | Status |
 | ---- | ------------------------------------------------------------ | -------- | ------ |
-| R11  | Users should have to sign into the system; their google acount should be used for identification. | Low - Med      | Open   |
-| R12  | The user should be able to see a map of their sorrounding area with markers for nearby areas with activities. | High     | Open   |
-| R13  | The user should be able to select a marker on map and be able to see the activity as well as directions to the marker. Directions should be verified from a few different locations from campus to verify directions. | High     | Open   |
-| R14  | A full-time employee should not be able to submit a time card with less than 40 hours per week recorded. | High     | Open   |
-| R15  | A user should be authenticated as having "Done" the activity with either geolocation proximity | High      | Open   |
-| R16  | A user should be authenticated as having "Done" the activity with IMAGE analysis | Low      | Open   |
+| R11  | The frontend should display a login portal that requires a Google account to sign in for identification. | Low - Med      | Open   |
+| R12  | The frontend should display a map of a user's surrounding area with markers for nearby areas with activities. | High     | Open   |
+| R13  | The frontend should allow users to select a marker on map and display the activity with directions to the marker. It must also be verified from a few different locations from campus to verify directions. | High     | Open   |
+| R14  | The frontend should not accept a full-time employee's time card with less than 40 hours per week recorded. | High     | Open   |
+| R15  | The frontend should authenticate a user as having "Done" the activity with either geolocation proximity | High      | Open   |
+| R16  | The frontend should authenticate a user as having "Done" the activity with IMAGE analysis | Low      | Open   |
 | R17  | Physically place certain minigames in these areas around campus for minigames | High     | Open   |
-| R18  | A section or tab in the web app where users are able to see their past completed history | High     | Open   |
-| R19  | A section or tab in the web app where users are able to see their past completed history | High     | Open   |
-| R20  | Have the backend handle multiple users intereacting with the app at the same time | High     | Open   |
-| R21  | Have the backend service scale with Kubernetes depending on the load | Low     | Open   |
+| R18  | A section or tab in the web app that displays a user's past completed history | High     | Open   |
+| R19  | Have the backend handle multiple users intereacting with the app at the same time | High     | Open   |
+| R20  | Have the backend service scale with Kubernetes depending on the load | Low     | Open   |
 
 <div align="center"><small><i>Excerpt from Crookshanks Table 2-2 showing example user requirements for a timekeeping system</i></small></div>
 
