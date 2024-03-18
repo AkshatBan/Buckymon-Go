@@ -1,0 +1,142 @@
+[
+    {
+        "lat": 43.0753,
+        "long": -89.4034,
+        "location_name": "Bascom Hall"
+    },
+    {
+        "lat": 43.0720,
+        "long": -89.4076,
+        "location_name": "Union South"
+    },
+    {
+        "lat": 43.0762,
+        "long": -89.4000,
+        "location_name": "Memorial Union"
+    },
+    {
+        "lat": 43.0751,
+        "long": -89.3943,
+        "location_name": "Taco Bell Cantina"
+    },
+    {
+        "lat": 43.0707,
+        "long": -89.3989,
+        "location_name": "Nicholas Recreation Center"
+    },
+    {
+        "lat": 43.0767,
+        "long": -89.4201,
+        "location_name": "Bakke Recreation Center"
+    },
+    {
+        "lat": 43.0711,
+        "long": -89.4094,
+        "location_name": "Camp Randall Memorial Arch"
+    },
+    {
+        "lat": 43.0694,
+        "long": -89.396972,
+        "location_name": "Kohl Center"
+    },
+    {
+        "lat": 43.0746,
+        "long": -89.4013,
+        "location_name": "Music Hall"
+    },
+    {
+        "lat": 43.0712,
+        "long": -89.4066,
+        "location_name": "Computer Science Building"
+    },
+    {
+        "lat": 43.0747,
+        "long": -89.3841,
+        "location_name": "Wisconsin State Capitol Building"
+    },
+    {
+        "lat": 43.073885,
+        "long": -89.399632,
+        "location_name": "Chazen Art Museum"
+    },
+    {
+        "lat": 43.07610606403628,
+        "long": -89.40505738646713,
+        "location_name": "Carillon Tower"
+    },
+    {
+        "lat": 43.07552117476707,
+        "long": -89.41030164416945,
+        "location_name": "Agricultural Hall"
+    },
+    {
+        "lat": 43.075111055496706,
+        "long": -89.41516087597715,
+        "location_name": "Stock Pavilion"
+    },
+    {
+        "lat": 43.07502717300505,
+        "long": -89.41382232771528,
+        "location_name": "Babcock Hall Dairy Store"
+    },
+    {
+        "lat": 43.068286873850056,
+        "long": -89.4126676476076,
+        "location_name": "Wisconsin Field House"
+    },
+    {
+        "lat": 43.07308218737385,
+        "long": -89.40092169988056,
+        "location_name": "Wisconsin School of Business"
+    },
+    {
+        "lat": 43.0753807999997,
+        "long": -89.39847899307212,
+        "location_name": "Memorial Library"
+    },
+    {
+        "lat": 43.076032149722764,
+        "long": -89.39841829728448,
+        "location_name": "Red Gym"
+    },
+    {
+        "lat": 43.06986770715015,
+        "long": -89.40922840005312,
+        "location_name": "Kwik Trip"
+    },
+    {
+        "lat": 43.073225219619125,
+        "long": -89.40771376930945,
+        "location_name": "Discovery Building"
+    },
+    {
+        "lat": 43.07365346736112,
+        "long": -89.40410001626894,
+        "location_name": "University of Wisconsin Botanical Gardens"
+    },
+    {
+        "lat": 43.07662892776181,
+        "long": -89.40883412821086,
+        "location_name": "Observatory Drive Overlook"
+    },
+    {
+        "lat": 43.076210778208214,
+        "long": -89.4086620187763,
+        "location_name": "Washburn Observatory"
+    },
+    {
+        "lat": 43.07676741144372,
+        "long": -89.41294461576284,
+        "location_name": "Allen Centennial Garden"
+    },
+    {
+        "lat": 43.0749268686802,
+        "long": -89.392638586702,
+        "location_name": "Peace Park"
+    },
+    {
+        "lat": 43.07756511084374,
+        "long": -89.40561113790231,
+        "location_name": "Lakeshore Path"
+    }
+]
