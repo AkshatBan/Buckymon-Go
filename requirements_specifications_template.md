@@ -25,7 +25,7 @@ Stretch: An interface where people holding events can enter a request to have a 
 <!--This section lists the behavior that the users see. This information needs to be presented in a logical, organized fashion. It is most helpful if this section is organized in outline form: a bullet list of major topics (e.g., one for each kind of user, or each major piece of system functionality) each with some number of subtopics.-->
 
 | ID   | Description                                                  | Priority | Status | Test Plan |
-| ---- | ------------------------------------------------------------ | -------- | ------ |
+| ---- | ------------------------------------------------------------ | -------- | ------ | --------- |
 | R11  | The frontend should display a login portal that requires a Google account to sign in for identification. | Low - Med      | Open   | |
 | R12  | The frontend should display a map of a user's surrounding area with markers for nearby areas with activities. | High     | Open   | |
 | R13  | The frontend should allow users to select a marker on map and display the activity with directions to the marker. It must also be verified from a few different locations from campus to verify directions. | High     | Open   | |
