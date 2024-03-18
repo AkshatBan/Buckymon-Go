@@ -26,10 +26,10 @@ Stretch: An interface where people holding events can enter a request to have a 
 
 | ID   | Description                                                  | Priority | Status | Test Plan |
 | ---- | ------------------------------------------------------------ | -------- | ------ | --------- |
-| R11  | The frontend should display a login portal that requires a Google account to sign in for identification. | Low - Med      | Open   | |
-| R12  | The frontend should display a map of a user's surrounding area with markers for nearby areas with activities. | High     | Open   | |
-| R13  | The frontend should allow users to select a marker on map and display the activity with directions to the marker. It must also be verified from a few different locations from campus to verify directions. | High     | Open   | |
-| R14  | The frontend should not accept a full-time employee's time card with less than 40 hours per week recorded. | High     | Open   | |
+| R11  | The frontend should display a login portal that requires a Google account to sign in for identification. | Low - Med      | Open   | Ensure login portal displays properly, including the Google sign in button and sign-up button. |
+| R12  | The frontend should display a map of a user's surrounding area with markers for nearby areas with activities. | High     | Open   | Set a print statement to ensure the correct data is valid to the user's current position. |
+| R13  | The frontend should allow users to select a marker on map and display the activity with directions to the marker. It must also be verified from a few different locations from campus to verify directions. | High     | Open   | Create print statements to show that the correct location was selected with corresponding activities. |
+| R14  | The frontend should not accept a full-time employee's time card with less than 40 hours per week recorded. | High     | Open   | Create an exception that prints a message that it could not accept a full-time employee's time due to having less than 40 hours per week. |
 | R15  | The frontend should authenticate a user as having "Done" the activity with either geolocation proximity | High      | Open   | |
 | R16  | The frontend should authenticate a user as having "Done" the activity with IMAGE analysis | Low      | Open   | |
 | R17  | Physically place certain minigames in these areas around campus for minigames | High     | Open   | |
