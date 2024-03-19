@@ -30,12 +30,12 @@ Stretch: An interface where people holding events can enter a request to have a 
 | R12  | The frontend should display a map of a user's surrounding area with markers for nearby areas with activities. | High     | Open   | Set a print statement to ensure the correct data is valid to the user's current position. |
 | R13  | The frontend should allow users to select a marker on map and display the activity with directions to the marker. It must also be verified from a few different locations from campus to verify directions. | High     | Open   | Create print statements to show that the correct location was selected with corresponding activities. |
 | R14  | The frontend should not accept a full-time employee's time card with less than 40 hours per week recorded. | High     | Open   | Create an exception that prints a message that it could not accept a full-time employee's time due to having less than 40 hours per week. |
-| R15  | The frontend should authenticate a user as having "Done" the activity with either geolocation proximity | High      | Open   | |
-| R16  | The frontend should authenticate a user as having "Done" the activity with IMAGE analysis | Low      | Open   | |
-| R17  | Physically place certain minigames in these areas around campus for minigames | High     | Open   | |
-| R18  | A section or tab in the web app that displays a user's past completed history | High     | Open   | |
-| R19  | Have the backend handle multiple users intereacting with the app at the same time | High     | Open   | |
-| R20  | Have the backend service scale with Kubernetes depending on the load | Low     | Open   | |
+| R15  | The frontend should authenticate a user as having "Done" the activity with either geolocation proximity | High      | Open   | Create a print statement from backend to indicat that user has completed the activity. |
+| R16  | The frontend should authenticate a user as having "Done" the activity with IMAGE analysis | Low      | Open   | Create a print statement from backend to indicate that user has completed the activity. |
+| R17  | Physically place certain minigames in these areas around campus for minigames | High     | Open   |  |
+| R18  | A section or tab in the web app that displays a user's past completed history | High     | Open   | Check if backend successfully gets the data of completed events. Next verify that the backend successfully sends the data to the frontend, and that the frontend receives properly. Then ensure that the user's completed events are displayed correctly, including format and correct data. |
+| R19  | Have the backend handle multiple users intereacting with the app at the same time | High     | Open   | Make a seperate array of active users and print them as output on console. |
+| R20  | Have the backend service scale with Kubernetes depending on the load | Low     | Open   | Everytime an instane is created, output the number of instances and some indicator to determine if the load is good or bad. |
 
 <div align="center"><small><i>Excerpt from Crookshanks Table 2-2 showing example user requirements for a timekeeping system</i></small></div>
 
