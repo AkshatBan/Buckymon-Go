@@ -31,9 +31,8 @@ Stretch: An interface where people holding events can enter a request to have a 
 | R13  | The frontend should allow users to select a marker on map and display the activity with directions to the marker. It must also be verified from a few different locations from campus to verify directions. | High     | Open   | Create print statements to show that the correct location was selected with corresponding activities. |
 | R14  | The frontend should authenticate a user as having "Done" the activity with either geolocation proximity | High      | Open   | Create a print statement from backend to indicat that user has completed the activity. |
 | R15  | The frontend should authenticate a user as having "Done" the activity with IMAGE analysis | Low      | Open   | Create a print statement from backend to indicate that user has completed the activity. |
-| R16  | A section or tab that lets users physically place certain minigames in these areas around campus for minigames | Low     | Open   |  |
-| R17  | A section or tab in the web app that displays a user's past completed history | High     | Open   | Check if backend successfully gets the data of completed events. Next verify that the backend successfully sends the data to the frontend, and that the frontend receives properly. Then ensure that the user's completed events are displayed correctly, including format and correct data. |
-| R18  | Have the backend handle multiple users intereacting with the app at the same time | High     | Open   | Make a seperate array of active users and print them as output on console. |
+| R16  | A section or tab in the web app that displays a user's past completed history | High     | Open   | Check if backend successfully gets the data of completed events. Next verify that the backend successfully sends the data to the frontend, and that the frontend receives properly. Then ensure that the user's completed events are displayed correctly, including format and correct data. |
+| R17  | Have the backend handle multiple users intereacting with the app at the same time | High     | Open   | Make a seperate array of active users and print them as output on console. |
 
 <div align="center"><small><i>Excerpt from Crookshanks Table 2-2 showing example user requirements for a timekeeping system</i></small></div>
 
