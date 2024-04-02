@@ -61,9 +61,11 @@ Here is a sample user story from [Clean Agile](https://learning-oreilly-com.ezpr
 
 ### Decommission User Stories
 
-Here is an example of a user story to be decommissioned:
+Here is an example of an issue/user story to be decommissioned:
 
 > DECOMMISSION: Implement User Authentication to Frontend.
+
+Be sure to add a small comment to the issue to add more clarity of decommissioning it.
 
 ### User Interface Requirements
 
