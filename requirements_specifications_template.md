@@ -59,6 +59,12 @@ Here is a sample user story from [Clean Agile](https://learning-oreilly-com.ezpr
    1. Numbered
       1. Lists
 
+### Decommission User Stories
+
+Here is an example of a user story to be decommissioned:
+
+> DECOMMISSION: Implement User Authentication to Frontend.
+
 ### User Interface Requirements
 
 <!--Describes any customer user interface requirements including graphical user interface requirements as well as data exchange format requirements. This also should include necessary reporting and other forms of human readable input and output. This should focus on how the feature or product and user interact to create the desired workflow. Describing your intended interface as “easy” or “intuitive” will get you nowhere unless it is accompanied by details.-->
