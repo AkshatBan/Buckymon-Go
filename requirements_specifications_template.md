@@ -281,5 +281,10 @@ function abc(x, y, z){
 ### Branch Naming Convention
 When creating a new branch use the following convention, initial + forward slash + name of feauture. For example, `AA/issue4` for user Agastya Asthana working on Issue #4.
 
+### Closing Issues in GitLab
+As we move issues to the workflow columns on the sprint board (workflow::in_progress and workflow::blocked), those workflow labels get added to the issue's list of labels. When closing the issues, make sure to deselect these workflow labels in an effort to avoid confusion.
+
+Also make sure to re-evaluate your weight estimations and modify them with the amount of time the issue actually took. This will help us get better at our estimations and also ensure that we accurately track everyone's project contributions.
+
 
 <!--Here you can document your coding standards and conventions. This includes decisions about naming, style guides, etc.-->
