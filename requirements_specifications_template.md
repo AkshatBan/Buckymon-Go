@@ -24,19 +24,15 @@ Stretch: An interface where people holding events can enter a request to have a 
 
 <!--This section lists the behavior that the users see. This information needs to be presented in a logical, organized fashion. It is most helpful if this section is organized in outline form: a bullet list of major topics (e.g., one for each kind of user, or each major piece of system functionality) each with some number of subtopics.-->
 
-| ID   | Description                                                  | Priority | Status |
-| ---- | ------------------------------------------------------------ | -------- | ------ |
-| R11  | Users should have to sign into the system; their google acount should be used for identification. | Low - Med      | Open   |
-| R12  | The user should be able to see a map of their sorrounding area with markers for nearby areas with activities. | High     | Open   |
-| R13  | The user should be able to select a marker on map and be able to see the activity as well as directions to the marker. Directions should be verified from a few different locations from campus to verify directions. | High     | Open   |
-| R14  | A full-time employee should not be able to submit a time card with less than 40 hours per week recorded. | High     | Open   |
-| R15  | A user should be authenticated as having "Done" the activity with either geolocation proximity | High      | Open   |
-| R16  | A user should be authenticated as having "Done" the activity with IMAGE analysis | Low      | Open   |
-| R17  | Physically place certain minigames in these areas around campus for minigames | High     | Open   |
-| R18  | A section or tab in the web app where users are able to see their past completed history | High     | Open   |
-| R19  | A section or tab in the web app where users are able to see their past completed history | High     | Open   |
-| R20  | Have the backend handle multiple users intereacting with the app at the same time | High     | Open   |
-| R21  | Have the backend service scale with Kubernetes depending on the load | Low     | Open   |
+| ID   | Description                                                  | Priority | Status | Test Plan |
+| ---- | ------------------------------------------------------------ | -------- | ------ | --------- |
+| R11  | The frontend should display a login portal that requires a Google account to sign in for identification. | Low - Med      | Open   | Ensure login portal displays properly, including the Google sign in button and sign-up button. |
+| R12  | The frontend should display a map of a user's surrounding area with markers for nearby areas with activities. | High     | Open   | Set a print statement to ensure the correct data is valid to the user's current position. |
+| R13  | The frontend should allow users to select a marker on map and display the activity with directions to the marker. It must also be verified from a few different locations from campus to verify directions. | High     | Open   | Create print statements to show that the correct location was selected with corresponding activities. |
+| R14  | The frontend should authenticate a user as having "Done" the activity with either geolocation proximity | High      | Open   | Create a print statement from backend to indicat that user has completed the activity. |
+| R15  | The frontend should authenticate a user as having "Done" the activity with IMAGE analysis | Low      | Open   | Create a print statement from backend to indicate that user has completed the activity. |
+| R16  | A section or tab in the web app that displays a user's past completed history | High     | Open   | Check if backend successfully gets the data of completed events. Next verify that the backend successfully sends the data to the frontend, and that the frontend receives properly. Then ensure that the user's completed events are displayed correctly, including format and correct data. |
+| R17  | Have the backend handle multiple users intereacting with the app at the same time | High     | Open   | Make a seperate array of active users and print them as output on console. |
 
 <div align="center"><small><i>Excerpt from Crookshanks Table 2-2 showing example user requirements for a timekeeping system</i></small></div>
 
@@ -62,6 +58,14 @@ Here is a sample user story from [Clean Agile](https://learning-oreilly-com.ezpr
 2. Use
    1. Numbered
       1. Lists
+
+### Decommission User Stories
+
+Here is an example of an issue/user story to be decommissioned:
+
+> DECOMMISSION: Implement User Authentication to Frontend.
+
+Be sure to add a small comment to the issue to add more clarity of decommissioning it.
 
 ### User Interface Requirements
 
@@ -276,6 +280,11 @@ function abc(x, y, z){
 
 ### Branch Naming Convention
 When creating a new branch use the following convention, initial + forward slash + name of feauture. For example, `AA/issue4` for user Agastya Asthana working on Issue #4.
+
+### Closing Issues in GitLab
+As we move issues to the workflow columns on the sprint board (workflow::in_progress and workflow::blocked), those workflow labels get added to the issue's list of labels. When closing the issues, make sure to deselect these workflow labels in an effort to avoid confusion.
+
+Also make sure to re-evaluate your weight estimations and modify them with the amount of time the issue actually took. This will help us get better at our estimations and also ensure that we accurately track everyone's project contributions.
 
 
 <!--Here you can document your coding standards and conventions. This includes decisions about naming, style guides, etc.-->
