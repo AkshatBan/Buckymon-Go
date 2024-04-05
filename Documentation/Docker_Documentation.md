@@ -79,6 +79,10 @@ registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/
 be sure to replace the `frontend` and `image` with the appropriate 
 substitutions.
 
+If that doesn't work right away, try the following command:
+`docker tag my_mysql_image registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go/my_mysql_image`
+Be sure to replace `my_mysql_image` with the image name you specified above.
+
 ## Where to find Docker Images
 Head over to the git lab project and you will find the images in `Deploy 
 → Container Registry`
