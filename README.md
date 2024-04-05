@@ -29,4 +29,4 @@
    Louis Digon: Backend
    <br>
    <br>
-   Akshat Bansal: Backend/Database
+   Akshat Bansal: DevOps/Database
