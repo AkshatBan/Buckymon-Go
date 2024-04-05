@@ -1,0 +1,49 @@
+# Defines stages that will be executed in the pipeline
+stages:
+  - build
+  - test
+  - deploy
+
+# Define variables that will be used in the pipeline
+variables:
+  IMAGE_NAME: "your_image_name"
+  DOCKER_REGISTRY: "your.docker.registry"
+  DOCKER_IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
+
+# Define job for building the application
+build-frontend:
+  stage: build
+  script:
+    - echo "Building the frontend..."
+    # Add commands to build your application here
+
+build-backend:
+  stage: build
+  script:
+    - echo "Building the backend..."
+    # Add commands to build your application here
+
+build-database:
+  stage: build
+  script:
+    - echo "Building the database..."
+    # Add commands to build your application here
+
+# Define job for testing the application
+test:
+  stage: test
+  script:
+    - echo "Running tests..."
+    # Add commands to run your tests here
+
+# Define job for deploying the application
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying the application..."
+    # Add commands to deploy your application here
+  environment:
+    name: production
+    url: "https://yourapp.com"
+  only:
+    - main
