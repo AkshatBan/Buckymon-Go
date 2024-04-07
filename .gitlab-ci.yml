@@ -13,6 +13,7 @@ variables:
 # Define job for building the application
 build-frontend:
   stage: build
+  image: node:alpine
   script:
     - echo "Building the frontend..."
     # Add commands to build your application here
