@@ -6,7 +6,7 @@ function MyMarker(props){
     const [selected, Set_Selected] = React.useState(false);
     const [response_data, Set_Response_Data] = React.useState(null);
 
-    //asynchronous function because post request takes time
+    // asynchronous function because post request takes time
     const Handle_Complete = async () => {
         try {
             const response = await fetch("http://127.0.0.1:5000/api/Get_Data_From_Frontend", {
@@ -32,7 +32,7 @@ function MyMarker(props){
 
 
     return(
-        <div>
+        <div data-testid="marker">
             <Marker 
                 key={props.id}
                 latitude={props.latitude}
@@ -53,8 +53,7 @@ function MyMarker(props){
                         <button 
                             style={{"backgroundColor": "lime"}} 
                             onClick={() => {
-                                Set_Selected(false);
-                                Handle_Complete()
+                                Set_Selected(false)
                             }}>
                             Complete Event
                         </button>
