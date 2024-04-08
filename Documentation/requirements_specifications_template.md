@@ -32,6 +32,7 @@ Stretch: An interface where people holding events can enter a request to have a 
 | R14  | A section or tab in the web app that displays a user's past completed history, including a user's achievements and game score. | High     | Open   | Check if backend successfully gets the data of completed events. Next verify that the backend successfully sends the data to the frontend, and that the frontend receives properly. Then ensure that the user's completed events are displayed correctly, including format and correct data. |
 | R15  | Have the backend handle multiple users intereacting with the app at the same time | Med     | Open   | Make a seperate array of active users and print them as output on console. |
 | R16 | The frontend should send a request to the backend upon a user completing an event to log that event in user's completed history. | High     | Open   | Check that the backend returns the following body "{ updated_score : old_score + event_score } with code 200" |
+| R17 | The frontend should successfully log the user in to have access to their completed events and future data. | Med. - High | Open | Check upon successful login that the frontend returns code 200, otherwise, return 409 upon failure. |
 
 <div align="center"><small><i>Excerpt from Crookshanks Table 2-2 showing example user requirements for a timekeeping system</i></small></div>
 
