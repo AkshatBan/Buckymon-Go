@@ -33,6 +33,7 @@ Stretch: An interface where people holding events can enter a request to have a 
 | R15  | Have the backend handle multiple users intereacting with the app at the same time | Med     | Open   | Make a seperate array of active users and print them as output on console. |
 | R16 | The frontend should send a request to the backend upon a user completing an event to log that event in user's completed history. | High     | Open   | Check that the backend returns the following body "{ updated_score : old_score + event_score } with code 200" |
 | R17 | The frontend should successfully log the user in to have access to their completed events and future data. | Med. - High | Open | Check upon successful login that the frontend returns the following message, "successfully logged in", along with code 200, otherwise, return code 400 with the following message, "username not registered" or code 401 with the message "password does not match username provided" upon failure. |
+| R18 | Upon a user's request, the main page should display a map of user's current location for user to see nearby locations with uncompleted events. | High | Closed | Ensure that coordinates are set correctly. |
 
 <div align="center"><small><i>Excerpt from Crookshanks Table 2-2 showing example user requirements for a timekeeping system</i></small></div>
 
