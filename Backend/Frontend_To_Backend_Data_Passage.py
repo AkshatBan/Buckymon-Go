@@ -3,6 +3,7 @@
 # Imports necessary Flask modules
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+import pymysql.cursors
 
 # Creates a Flask application
 app = Flask(__name__)
@@ -60,8 +61,51 @@ def Get_Data_From_Frontend():
 
     # Once, the data is stored in the database, return a response (indicator of receiving the request successfully)
 
+# When the user completes an event a post will be sent to the backend with the following body
+# {
+#    username: 'user123',
+#    event_id: 1
+#}
 
+@app.route('/api/Complete_Event', methods=['POST'])
+def Complete_Event(userInfo):
+    
+    #userInfo = {
+                #'username': 'Aaron',
+                #'event_id': '40000002'
+               #}
+
+    userName = userInfo['username']
+    eventId = userInfo['event_id']
+    userScore = 0
+    eventScore = 0
+
+    # Connect to the database just to access event and get its score value and then get userScore
+    connection = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+
+    with connection:
+        #First reads the event score value
+        with connection.cursor() as cursor:
+            query = 'SELECT e_score FROM Events WHERE e_id = ' + eventId
+            cursor.execute(query)
+            result = cursor.fetchone()
+            eventScore = result['e_score']
+
+        # Now obtains the user's score
+        with connection.cursor() as cursor:
+            query = 'SELECT u_score FROM User WHERE u_name = ' + '\'' + userName + '\''
+            cursor.execute(query)
+            result = cursor.fetchone()
+            userScore = result['u_score']
+
+    return  {
+                    'updated_score': userScore + eventScore
+            }
 
 # Runs the Flask application.
-    if __name__ == '__main__':
-        app.run(debug = True)
+if __name__ == '__main__':
+    app.run(debug = True)
