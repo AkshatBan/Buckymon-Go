@@ -4,10 +4,9 @@ USE Buckymon_Go_DB;
 -- Following 4 tables are the entities
 CREATE TABLE User (
     u_id INT NOT NULL auto_increment,
-    u_first_name VARCHAR(255) NULL,
-    u_last_name VARCHAR(255) NULL,
+    u_name VARCHAR(255) NULL,
     u_score INT NULL,
-    PRIMARY KEY (u_id)
+    PRIMARY KEY (u_id, u_name)
 );
 ALTER TABLE User auto_increment = 10000001;
 
