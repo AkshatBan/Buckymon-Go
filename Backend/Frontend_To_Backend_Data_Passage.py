@@ -77,14 +77,14 @@ def Complete_Event(userInfo):
     # Connect to the database just to access event and get its score value and then get userScore
     connection = pymysql.connect(host='127.0.0.1',
                                 user='root',
-                                password='Jonah2004*',
+                                password='ShXoPIL7d*%',
                                 database='Buckymon_Go_DB',
                                 cursorclass=pymysql.cursors.DictCursor)
 
     with connection:
         #First reads the event score value
         with connection.cursor() as cursor:
-            query = 'SELECT e_score FROM Events WHERE e_id = ' + eventId
+            query = 'SELECT e_score FROM Events WHERE e_id = ' + str(eventId)
             cursor.execute(query)
             result = cursor.fetchone()
             eventScore = result['e_score']
@@ -102,4 +102,10 @@ def Complete_Event(userInfo):
 
 # Runs the Flask application.
 if __name__ == '__main__':
+    info = {
+        'username': 'Superuser',
+        'event_id': 40000001
+    }
+    print(Complete_Event(info))
+    
     app.run(debug = True)
