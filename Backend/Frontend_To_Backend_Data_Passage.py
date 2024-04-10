@@ -29,37 +29,52 @@ location_data = [
 
 ]
 
-# May create a method that queries the event data from the database once setup.
+# Returns list of all location data 
+@app.route('/api/Get_List_Of_Locations', methods=['GET'])
+def Get_List_Of_Locations():
+    # Connect to the database
+    connection = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
 
-# Retrieves data from database, packages it into JSON format, and sent to frontend.
-@app.route('/api/Post_Data_To_Frontend', methods=['GET'])
-def Post_Data_To_Frontend():
-    # Extract event data from database.
-    # query = 'SELECT * FROM your_table_name' # will replace with actual database name
-    
-    # Initialize data for
-    data = location_data
+    with connection:
+        with connection.cursor() as cursor:
+            # Selects all Locations
+            query = 'SELECT * FROM Locations;'
+            cursor.execute(query)
+            # Have to use fetch all to make sure it actually returns all matches 
+            result = cursor.fetchall()
 
-    # Package event data in JSON.
+            
+    #Renames each of the keys to match how its specification in the API Documentation        
+    for dictionary in result:
+        dictionary['id'] = dictionary.pop("l_id")
+        # Converts the latitude and longitude to floats with 5 digits
+        dictionary['lat'] = round(float(dictionary.pop("l_lat") ))
+        dictionary['long'] = round(float(dictionary.pop("l_long")))
+        dictionary['location_name'] = dictionary.pop("l_name")
 
-    if data:
-        # Returns data in JSON format
-        return jsonify(data)
-
-# Receives the data from the frontend. When user clicks "Complete Event" button, this method will retrieve all event details, including the name, id, and location and stores it into the database.
-@app.route('/api/Get_Data_From_Frontend', methods = ['GET', 'POST'])
-def Get_Data_From_Frontend():
-        # Access the JSON data from the request body
-    data = request.json
-    print(request.json)
-    print("Received JSON data:", data)
-    return jsonify({"message": "Data received successfully"}), 200
-    # Gets the data from the request upon user completing an event in JSON format.
-    
-    # Process the data and store to the database.
-
-    # Once, the data is stored in the database, return a response (indicator of receiving the request successfully)
-
+        #Has to create a new connection
+        connection2 = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+        #Adds an event description 
+        with connection2:
+            with connection2.cursor() as cursor:
+                # Selects all Locations
+                query = 'SELECT e_desc FROM Events WHERE l_id = ' + str(dictionary['id'])
+                cursor.execute(query) 
+                description = cursor.fetchone()
+                
+                #Only adds it if it exists
+                if( description != None):
+                    dictionary['event_desc'] = description['e_desc']
+    #Converts the dicionary to json
+    return json.dumps(result)
 
 # When the user completes an event a post will be sent to the backend with the following body
 # {
