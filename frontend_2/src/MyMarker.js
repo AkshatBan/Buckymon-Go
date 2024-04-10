@@ -16,10 +16,10 @@ function MyMarker(props){
                 },
                 //dummy data for now, more to be added later
                 body: JSON.stringify({ 
-                    lat: props.latitude,
-                    long: props.longitude,
-                    id: props.id,
-                    user: "grant_hall"
+                    // lat: props.latitude,
+                    // long: props.longitude,
+                    event_id: 40000001,
+                    username: "Superuser"
                 })
             });
             const data = await response.json();

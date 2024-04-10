@@ -69,7 +69,9 @@ def Get_Data_From_Frontend():
 #}
 
 @app.route('/api/Complete_Event', methods=['POST'])
-def Complete_Event(userInfo):
+def Complete_Event():
+    userInfo = request.json
+    print(userInfo)
     userName = userInfo['username']
     eventId = userInfo['event_id']
     userScore = 0
@@ -98,16 +100,10 @@ def Complete_Event(userInfo):
             result = cursor.fetchone()
             userScore = result['u_score']
 
-    return  200, json.dumps({
-                    'updated_score': userScore + eventScore
-                 })
+    return  json.dumps({
+                'updated_score': userScore + eventScore
+            }), 200
 
 # Runs the Flask application.
-if __name__ == '__main__':
-    info = {
-        'username': 'Superuser',
-        'event_id': 40000001
-    }
-    print(Complete_Event(info))
-    
+if __name__ == '__main__':    
     app.run(debug = True)
