@@ -10,8 +10,6 @@ import json
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
-
-
 # Sample location data (will change later)
 location_data = [
             {   
@@ -62,25 +60,26 @@ def Get_Data_From_Frontend():
 
     # Once, the data is stored in the database, return a response (indicator of receiving the request successfully)
 
+
 # When the user completes an event a post will be sent to the backend with the following body
 # {
 #    username: 'user123',
 #    event_id: 1
 #}
-
 @app.route('/api/Complete_Event', methods=['POST'])
 def Complete_Event():
     userInfo = request.json
-    print(userInfo)
     userName = userInfo['username']
     eventId = userInfo['event_id']
     userScore = 0
     eventScore = 0
+    userId = 0
+    updatedScore = 0
 
     # Connect to the database just to access event and get its score value and then get userScore
     connection = pymysql.connect(host='127.0.0.1',
                                 user='root',
-                                password='ShXoPIL7d*%',
+                                password='Jonah2004*',
                                 database='Buckymon_Go_DB',
                                 cursorclass=pymysql.cursors.DictCursor)
 
@@ -90,7 +89,6 @@ def Complete_Event():
             query = 'SELECT e_score FROM Events WHERE e_id = ' + str(eventId)
             cursor.execute(query)
             result = cursor.fetchone()
-            print(result)
             eventScore = result['e_score']
 
         # Now obtains the user's score
@@ -100,9 +98,46 @@ def Complete_Event():
             result = cursor.fetchone()
             userScore = result['u_score']
 
-    return  json.dumps({
-                'updated_score': userScore + eventScore
-            }), 200
+        #Gets the userId for later when we need to write to Completes Database
+            query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + userName + '\''
+            cursor.execute(query)
+            result = cursor.fetchone()
+            userId = result['u_id']
+        
+    # Separate connection to actually write to User Database
+    connection2 = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+
+    #Now writes the new user score to the database
+    with connection2.cursor() as cursor:
+        updatedScore = userScore + eventScore
+        #First writes to User database
+        query = 'UPDATE User SET u_score = ' + str(updatedScore) + ' WHERE u_name = ' + '\'' + userName + '\''
+        cursor.execute(query)
+
+    #Commits changes to User database
+    connection2.commit()
+
+    connection3 = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+    
+    with connection3.cursor() as cursor:
+        query = 'INSERT INTO Completes (completes_u_id, completes_e_id) Values (' + str(userId) + ',' + str(eventId) + ')'
+        cursor.execute(query)
+
+    #Commits change to Completes Database
+    connection3.commit()
+
+    #Returns it in JSON format with success code 200
+    return json.dumps({
+                    'updated_score': updatedScore
+                 }), 200
 
 # Runs the Flask application.
 if __name__ == '__main__':    
