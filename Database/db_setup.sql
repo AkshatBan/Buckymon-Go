@@ -4,7 +4,7 @@ USE Buckymon_Go_DB;
 -- Following 4 tables are the entities
 CREATE TABLE User (
     u_id INT NOT NULL auto_increment,
-    u_name VARCHAR(255) NULL,
+    u_name VARCHAR(255) UNIQUE,
     u_score INT NULL,
     PRIMARY KEY (u_id, u_name)
 );
