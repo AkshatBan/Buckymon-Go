@@ -13,7 +13,7 @@ The base Url for that the backend will post to and the frontend will fetch from 
 
 ## Currently Supported Requests (as of 3/18/24)  
 
-### GET /Post_Data_To_Frontend 
+### GET /Get_List_Of_Locations
 
 Returns a list of location data with each location with the following format
 
@@ -26,21 +26,7 @@ Returns a list of location data with each location with the following format
     event_desc: 'description of even happening at this location'
 }
 ```
-
-### POST /Get_Data_From_Frontend  
-
-Upon completion of event, location data about where the event occurred is posted to the backend. 
-(In the future more information will be passed, when events are added) 
-
-The frontend sends json in the following format
 ```
-{
-    lat: 43.0719,
-    long: -89.408,
-    id: 1
-}
-```
-
 Upon successful request, the backend returns code **200** and the following message
 ```
 {
@@ -50,36 +36,7 @@ Upon successful request, the backend returns code **200** and the following mess
 
 ## Requests to Be Implemented  
 
-### POST /Register_User  
-
-In order to play, the user will be prompted to create an account with a username and password, the username must be unique.  
-
-The frontend will send a post with the following body, 
-
 ```
-{
-    username: 'user123',
-    password: 'password123
-}
-```
-
-Upon success, the backend will log in the user and return code **200** along with the following response body,
-
-```
-{
-    message: 'successfully logged in',
-    username: 'user123'
-}
-```
-
-Upon failure(duplicate username), teh backend will return code **409** and the following body,
-
-```
-{
-    message: 'Duplicate username'
-}
-```
-
 ### POST /Login_User
 
 In order to login the user will be prompted for their username and password. 
