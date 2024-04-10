@@ -62,14 +62,15 @@ def Get_Data_From_Frontend():
 
     # Once, the data is stored in the database, return a response (indicator of receiving the request successfully)
 
+
 # When the user completes an event a post will be sent to the backend with the following body
 # {
 #    username: 'user123',
 #    event_id: 1
 #}
-
 @app.route('/api/Complete_Event', methods=['POST'])
-def Complete_Event(userInfo):
+def Complete_Event():
+    userInfo = request.json
     userName = userInfo['username']
     eventId = userInfo['event_id']
     userScore = 0
@@ -97,6 +98,23 @@ def Complete_Event(userInfo):
             cursor.execute(query)
             result = cursor.fetchone()
             userScore = result['u_score']
+
+        
+    # Separate connection to actually write to database
+    connection2 = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+
+    #Now writes the new user score to the database
+    with connection2.cursor() as cursor:
+        newScore = userScore + eventScore
+        query = 'UPDATE User SET u_score = ' + str(newScore) + ' WHERE u_name = ' + '\'' + userName + '\''
+        cursor.execute(query)
+        
+    #Commits changes to database
+    connection2.commit()
 
     return  200, json.dumps({
                     'updated_score': userScore + eventScore
