@@ -2,7 +2,7 @@
 FROM mysql:latest
 
 # Setting up the environment variables
-ENV MYSQL_ROOT_PASSWORD=ShXoPIL7d*%
+ENV MYSQL_ROOT_PASSWORD=databasemysql
 
 
 # Copy the DB setup and test scripts into the container
