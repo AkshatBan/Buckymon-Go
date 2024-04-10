@@ -4,6 +4,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import pymysql.cursors
+import json
 
 # Creates a Flask application
 app = Flask(__name__)
@@ -87,6 +88,7 @@ def Complete_Event(userInfo):
             query = 'SELECT e_score FROM Events WHERE e_id = ' + str(eventId)
             cursor.execute(query)
             result = cursor.fetchone()
+            print(result)
             eventScore = result['e_score']
 
         # Now obtains the user's score
@@ -96,9 +98,9 @@ def Complete_Event(userInfo):
             result = cursor.fetchone()
             userScore = result['u_score']
 
-    return  200, {
+    return  200, json.dumps({
                     'updated_score': userScore + eventScore
-                 }
+                 })
 
 # Runs the Flask application.
 if __name__ == '__main__':
