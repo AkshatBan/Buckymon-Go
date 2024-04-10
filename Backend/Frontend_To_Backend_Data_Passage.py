@@ -69,12 +69,6 @@ def Get_Data_From_Frontend():
 
 @app.route('/api/Complete_Event', methods=['POST'])
 def Complete_Event(userInfo):
-    
-    #userInfo = {
-                #'username': 'Aaron',
-                #'event_id': '40000002'
-               #}
-
     userName = userInfo['username']
     eventId = userInfo['event_id']
     userScore = 0
