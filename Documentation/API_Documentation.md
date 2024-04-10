@@ -20,8 +20,8 @@ Returns a list of location data with each location with the following format
 ```
 {
     id: 1,
-    long: -89.408,
     lat: 43.0719,
+    long: -89.408,
     location_name: 'Union South',
     event_desc: 'description of even happening at this location'
 }
