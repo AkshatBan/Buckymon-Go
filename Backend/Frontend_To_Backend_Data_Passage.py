@@ -116,9 +116,10 @@ def Complete_Event():
     #Commits changes to database
     connection2.commit()
 
-    return  200, json.dumps({
+    #Returns it in JSON format with success code 200
+    return json.dumps({
                     'updated_score': userScore + eventScore
-                 })
+                 }), 200
 
 # Runs the Flask application.
 if __name__ == '__main__':
