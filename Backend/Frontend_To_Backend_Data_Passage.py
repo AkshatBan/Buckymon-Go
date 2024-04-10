@@ -102,9 +102,9 @@ def Complete_Event(userInfo):
             result = cursor.fetchone()
             userScore = result['u_score']
 
-    return  {
+    return  200, {
                     'updated_score': userScore + eventScore
-            }
+                 }
 
 # Runs the Flask application.
 if __name__ == '__main__':
