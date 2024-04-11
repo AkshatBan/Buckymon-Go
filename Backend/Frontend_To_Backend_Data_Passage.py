@@ -154,6 +154,31 @@ def Complete_Event():
                     'updated_score': updatedScore
                  }), 200
 
+
+@app.route('/api/Active_Events', methods = ['GET'])
+def Active_Events():
+    #userInfo = request.json
+    userInfo =  {
+                    'username': 'Charlie'
+                }
+
+    userName = userInfo['username']
+    userId = 0
+    # Connect to the database just to access event and get its score value and then get userScore
+    connection = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+    
+    with connection.cursor() as cursor:
+            #Gets the user id based on the user name
+            query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + userName + '\''
+            cursor.execute(query)
+            result = cursor.fetchone()
+            print(result)
+
 # Runs the Flask application.
-if __name__ == '__main__':    
-    app.run(debug = True)
+if __name__ == '__main__':   
+    print(Active_Events()) 
+    #app.run(debug = True)
