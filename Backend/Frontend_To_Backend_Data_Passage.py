@@ -154,6 +154,93 @@ def Complete_Event():
                     'updated_score': updatedScore
                  }), 200
 
+#This method takes in a username and returns all the Events that the user has not yet completed
+@app.route('/api/Active_Events', methods = ['GET'])
+def Active_Events():
+    userInfo = request.json
+    #For testing purposes
+    #userInfo =  #{
+                    #'username': 'Aaron'
+                #}
+
+    userName = userInfo['username']
+    userId = 0
+    eventDict = {}
+    # Connect to the database just to access event and get its score value and then get userScore
+    connection = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+    
+    with connection.cursor() as cursor:
+        #Gets the user id based on the user name
+        query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + userName + '\''
+        cursor.execute(query)
+        userDict = cursor.fetchone()
+        userId = userDict['u_id']
+
+        #Now we get all user's completed event IDs 
+        query = 'SELECT completes_e_id FROM Completes WHERE completes_u_id = ' + str(userId)
+        cursor.execute(query)
+        eventDict = cursor.fetchall()  
+    
+    #Stores all completed Events in tuple for our query to database
+    completedEventsIDs = []
+    for dictionary in eventDict:
+        completedEventsIDs.append(dictionary['completes_e_id'])
+
+    #Changes completedEventIDs to a string with parantheses
+    strRep = str(completedEventsIDs)
+    #Replaces the [] with () so it will work with my sql
+    strRep = '(' + strRep[1:len(strRep)-1:1] + ')'
+
+    uncompletedEvents = {}
+    connection2 = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+    
+    with connection2.cursor() as cursor:
+        query = 'SELECT * FROM Events WHERE e_id NOT IN ' + strRep
+        cursor.execute(query)
+        uncompletedEvents = cursor.fetchall()
+        
+    #Now builds final eventDict while also getting data from Locations table
+
+    for dictionary in uncompletedEvents:
+        dictionary['event_id'] = dictionary.pop('e_id')
+
+
+        #Gets latitude, longitude, and location name
+        connection3 = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+        
+        with connection3.cursor() as cursor:
+            query = 'SELECT l_name, l_lat, l_long FROM Locations WHERE l_id = ' + str(dictionary['l_id'])
+            cursor.execute(query)
+            locationData = cursor.fetchone()
+
+        # Converts the latitude and longitude to floats with 5 digits, adds location name
+        dictionary['lat'] = round(float(locationData['l_lat']))
+        dictionary['long'] = round(float(locationData['l_long']))
+        dictionary['location_name'] = locationData['l_name']
+
+        #Switches name of Event score, and Event Description
+        dictionary['event_score'] = dictionary.pop('e_score')
+        dictionary['event_description'] = dictionary.pop('e_desc')
+
+        #Gets rid of event name, location id
+        dictionary.pop('e_name')
+        dictionary.pop('l_id')
+
+    return json.dumps(uncompletedEvents)
+            
 # Runs the Flask application.
-if __name__ == '__main__':    
+if __name__ == '__main__':   
+    #print(Active_Events())
     app.run(debug = True)
