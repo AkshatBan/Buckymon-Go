@@ -262,8 +262,8 @@ def Log_User():
 
         # Checks if username is registered
         if result is None:
-            # Test statement.
-            print(f'{json.dumps({'username': username, 'message': 'username not registered'})}')
+            # TEST STATEMENT
+            print(f'{username} not registered in system.')
             
             # Logs/registers new user
             with connection.cursor() as cursor:
@@ -271,7 +271,7 @@ def Log_User():
                 cursor.execute(query)
                 connection.commit()
         else:
-            print(f'{username} is in system.') # Test statement
+            print(f'{username} is in system.') # TEST STATEMENT
             
         return json.dumps({'username': result['u_name'], 'message': 'successfully logged in'}), 200
 
