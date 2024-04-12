@@ -244,16 +244,17 @@ def Active_Events():
 # }
 @app.route('/api/Log_User', methods=['POST'])
 def Log_User():
-    # Extracts the username and password from request
+    # Extracts the username from request
     userInfo = request.json
     username = userInfo['username']
-    password = userInfo['password']
-    # TODO: Fix method to return appropriate JSON bodies
-    # TODO: Figure out how team wants to log new user and password, especially if it's in a database
-# When the user logs in, a GET request will be sent to the backend with the following body:
-# {
-#    username: 'user123'
-# }
+    
+    # TODO: Establish connection to database to conduct a single query
+    
+    # TODO: Check if user is in database.
+    
+        # TODO: Whether the user is registered to the database or not, output the body that displays success
+    
+        # TODO: If username is not in database, then insert that username into database
 
 # When the user logs in, a GET request will be sent to the backend with the following body:
 # {
