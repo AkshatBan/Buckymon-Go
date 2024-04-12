@@ -248,7 +248,7 @@ def Log_User():
     userInfo = request.json
     username = userInfo['username']
     
-    # Establishes connection to database to conduct a single query
+    # Establishes connection to database to conduct the necessary queries
     connection = pymysql.connect(host='127.0.0.1',
                                 user='root',
                                 password='Jonah2004*',
@@ -259,13 +259,19 @@ def Log_User():
             query = 'SELECT * FROM User WHERE u_name = ' + '\'' + username + '\''
             cursor.execute(query)
             result = cursor.fetchone()
-            return {'username': result['u_name'], 'message': 'successfully logged in'}
-        
-            query = 'INSERT INTO User (u_name, u_score) Values (' + username + ', 0'
-    
-        # TODO: Whether the user is registered to the database or not, output the body that displays success
-    
-        # TODO: If username is not in database, then insert that username into database
+
+        # Checks if username is registered
+        if result is None:
+            # Test statement.
+            print(f'{json.dumps({'username': username, 'message': 'username not registered'})}')
+            
+            # Logs/registers new user
+            with connection.cursor() as cursor:
+                query = 'INSERT INTO User (u_name, u_score) Values (' + username + ', 0'
+                cursor.execute(query)
+                connection.commit()
+            
+        return json.dumps({'username': result['u_name'], 'message': 'successfully logged in'}), 200
 
 # When the user logs in, a GET request will be sent to the backend with the following body:
 # {
