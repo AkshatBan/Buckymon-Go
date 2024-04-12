@@ -248,9 +248,20 @@ def Log_User():
     userInfo = request.json
     username = userInfo['username']
     
-    # TODO: Establish connection to database to conduct a single query
-    
-    # TODO: Check if user is in database.
+    # Establishes connection to database to conduct a single query
+    connection = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+    with connection:
+        with connection.cursor() as cursor:
+            query = 'SELECT * FROM User WHERE u_name = ' + '\'' + username + '\''
+            cursor.execute(query)
+            result = cursor.fetchone()
+            return {'username': result['u_name'], 'message': 'successfully logged in'}
+        
+            query = 'INSERT INTO User (u_name, u_score) Values (' + username + ', 0'
     
         # TODO: Whether the user is registered to the database or not, output the body that displays success
     
