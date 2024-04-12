@@ -1,5 +1,3 @@
-# The following code uses the Flask framework for the API, establishing communication between the backend and frontend upon the latter making a request for route data. Currently we do not have a database setup to extract information, but we do have ER diagram implemented that we'll use as our placeholder methods. 
-
 # Imports necessary Flask modules
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -12,21 +10,20 @@ CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 # Sample location data (will change later)
 location_data = [
-            {   
+            {
                 'id': 1,
-                'long': -89.408, 
+                'long': -89.408,
                 'lat': 43.0719,
                 'location_name': 'Union South',
                 'event_desc': 'description'
             },
             {
                 'id': 2,
-                'long': -89.4040, 
-                'lat': 43.0757, 
+                'long': -89.4040,
+                'lat': 43.0757,
                 'location_name': 'Bascom Hall',
                 'event_desc': 'something'
             }
-
 ]
 
 # Returns list of all location data 
@@ -239,7 +236,96 @@ def Active_Events():
         dictionary.pop('l_id')
 
     return json.dumps(uncompletedEvents)
-            
+
+# When a user attempts to login, a POST request will be sent to the backend with the following body:
+# {
+#     username: 'user123'
+#     password: 'password123'
+# }
+@app.route('/api/Log_User', methods=['POST'])
+def Log_User():
+    # Extracts the username and password from request
+    userInfo = request.json
+    username = userInfo['username']
+    password = userInfo['password']
+    # TODO: Fix method to return appropriate JSON bodies
+    # TODO: Figure out how team wants to log new user and password, especially if it's in a database
+# When the user logs in, a GET request will be sent to the backend with the following body:
+# {
+#    username: 'user123'
+# }
+
+# When the user logs in, a GET request will be sent to the backend with the following body:
+# {
+#    username: 'user123'
+# }
+@app.route('/api/Get_User_Achievements', methods=['GET'])
+def Get_User_Achievements():
+    # Acquires username upon GET request
+    #userInfo = request.json
+    userInfo = {
+                'username': 'Aaron'
+               }
+    userName = userInfo['username']
+    userScore = 0
+    # Establishes a table that contain user's completed achievement(s) to reference
+    completedAchievements = []
+    # Connect to database to read the data
+    connection = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+    # Obtains user score and user ID
+    with connection:
+        with connection.cursor() as cursor:
+            # Obtains user ID to reference when we extract user's completed achievements
+            query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + userName + '\''
+            cursor.execute(query)
+            result = cursor.fetchone()
+            userId = result['u_id']
+            # References user score to put onto JSON body
+            query = 'SELECT u_score FROM User WHERE u_name = ' + '\'' + userName + '\''
+            cursor.execute(query)
+            result = cursor.fetchone()
+            userScore = result['u_score']
+        # Gets all user's completed achievements to return in JSON format
+        with connection.cursor() as cursor:
+            query = 'SELECT achieves_a_id FROM Achieves WHERE achieves_u_id = ' + '\'' + str(userId) + '\''
+            cursor.execute(query)
+            achieved = cursor.fetchall()
+            # Queries through all achievements to extract user's completed achievements
+            for dictionary in achieved:
+                # References an achieved ID to extract user's completed achievement(s)
+                achievedID = str(dictionary['achieves_a_id'])
+                # Make a new connection to within for loop
+                connection2 = pymysql.connect(host='127.0.0.1',
+                                              user='root',
+                                              password='Jonah2004*',
+                                              database='Buckymon_Go_DB',
+                                              cursorclass=pymysql.cursors.DictCursor)
+                with connection2.cursor() as cursor:
+                    query = 'SELECT * FROM Achievements WHERE a_id = ' + '\'' + achievedID  + '\''
+                    cursor.execute(query)
+                    currentResult = cursor.fetchone()
+                    # Creates the user's completed achievement to add later
+                    userAchievement = {
+                        'achievement_id': currentResult['a_id'],
+                        'achievement_name': currentResult['a_name'],
+                        'achievement_score': currentResult['a_score'],
+                        'achievement_description': currentResult['a_desc']
+                    }
+                    completedAchievements.append(userAchievement)
+    # Formats the user's completed achievements data according to the API Documentation
+    result = {
+            'username': userName,
+            'user_score' : userScore,
+            'completed_achievements': completedAchievements
+    }
+    # Formats the final result in JSON format with success code 200
+    return json.dumps(result), 200
+
+
 # Runs the Flask application.
 if __name__ == '__main__':   
     #print(Active_Events())
