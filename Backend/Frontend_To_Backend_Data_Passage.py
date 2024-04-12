@@ -270,6 +270,8 @@ def Log_User():
                 query = 'INSERT INTO User (u_name, u_score) Values (' + username + ', 0'
                 cursor.execute(query)
                 connection.commit()
+        else:
+            print(f'{username} is in system.') # Test statement
             
         return json.dumps({'username': result['u_name'], 'message': 'successfully logged in'}), 200
 
