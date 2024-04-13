@@ -55,3 +55,13 @@ CREATE TABLE Completes (
     FOREIGN KEY (completes_u_id) REFERENCES User(u_id),
     FOREIGN KEY (completes_e_id) REFERENCES Events(e_id)
 );
+
+-- Adding starter data to the database 
+INSERT INTO Locations (l_name, l_lat, l_long) Values ('Bascom Hall', 0,0);
+INSERT INTO Locations (l_name, l_lat, l_long) Values ('Capitol Building', 0,0);
+INSERT INTO Locations (l_name, l_lat, l_long) Values ('Waters Residence Hall', 0,0);
+INSERT INTO Locations (l_name, l_lat, l_long) Values ('Gordon''s Dining Hall', 0,0);
+
+INSERT INTO Events (e_name, e_score, e_desc, l_id) VALUES ('Speed Friending', 1, 'Make friends in a fun and socially low-stakes environment!', 30000004);
+INSERT INTO Events (e_name, e_score, e_desc, l_id) VALUES ('Farmer''s Market', 3, 'The must-see largest outdoor farmer''s market in the world!', 30000002);
+INSERT INTO Events (e_name, e_score, e_desc, l_id) VALUES ('Good Luck!', 1, 'Rub Honest Abe''s foot for good luck!', 30000001);
