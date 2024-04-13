@@ -81,6 +81,13 @@ def Get_List_Of_Locations():
 @app.route('/api/Complete_Event', methods=['POST'])
 def Complete_Event():
     userInfo = request.json
+    '''
+    userInfo ={
+                'username': 'Aaron',
+                'event_id': 40000002
+              }
+    '''
+
     userName = userInfo['username']
     eventId = userInfo['event_id']
     userScore = 0
@@ -156,9 +163,11 @@ def Complete_Event():
 def Active_Events():
     userInfo = request.json
     #For testing purposes
-    #userInfo =  #{
-                    #'username': 'Aaron'
-                #}
+    '''
+    userInfo =  {
+                    'username': 'Aaron'
+                }
+    '''
 
     userName = userInfo['username']
     userId = 0
@@ -263,9 +272,11 @@ def Log_User():
 def Get_User_Achievements():
     # Acquires username upon GET request
     #userInfo = request.json
+    
     userInfo = {
                 'username': 'Aaron'
                }
+    
     userName = userInfo['username']
     userScore = 0
     # Establishes a table that contain user's completed achievement(s) to reference
@@ -328,5 +339,6 @@ def Get_User_Achievements():
 
 # Runs the Flask application.
 if __name__ == '__main__':   
-    #print(Active_Events())
-    app.run(debug = True)
+    print(Get_User_Achievements())
+    #app.run(debug = True)
+
