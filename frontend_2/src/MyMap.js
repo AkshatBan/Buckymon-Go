@@ -184,7 +184,7 @@ function MyMap(props){
     //fetch location data on component load
        
     React.useEffect(() => {
-        fetch("http://127.0.0.1:5000/api/Post_Data_To_Frontend", {
+        fetch("http://127.0.0.1:5000/api/Get_List_Of_Locations", {
             method: "GET"
         })
         .then(res => {
