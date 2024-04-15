@@ -269,7 +269,12 @@ def Log_User():
             with connection.cursor() as cursor:
                 query = 'INSERT INTO User (u_name, u_score) Values (' + username + ', 0'
                 cursor.execute(query)
+                # TODO: Check if you need to fetch to assign to result
                 connection.commit()
+
+                query = 'SELECT * FROM User WHERE u_name = ' + '\'' + username + '\''
+                cursor.execute(query)
+                result = cursor.fetchone()
         else:
             print(f'{username} is in system.') # TEST STATEMENT
             
