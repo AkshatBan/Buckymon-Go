@@ -121,9 +121,34 @@ In response, the backend will send code **200** along with the following body
 }
 ```
 
+If the user and that event have already been completed, the backend will send error code **400** 
+
 ### GET /Active_Events  
 
 This will return a list of active events that the user can seek out the complete, request body as follows 
+
+```
+{
+    username: 'user123'
+}
+```
+
+The backend will return a list of events that the user has **NOT** completed yet, each event will have the following format  
+
+```
+{
+    event_id: 1,
+    lat: 43.0719,
+    long: -89.408,
+    location_name: 'Union South',
+    event_score: 3,
+    event_description: 'sample event description'
+}
+```
+
+### GET /Get_Completed_Events 
+
+This will return a list of events that the user has already completed, request body as follows 
 
 ```
 {
