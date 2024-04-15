@@ -39,13 +39,12 @@ Upon successful request, the backend returns code **200** and the following mess
 ```
 ### POST /Login_User
 
-In order to login the user will be prompted for their username and password. 
+In order to login the user will be prompted for their username. There will be no authentification of the user.
 The frontend will pass this to the backend to attempt login with the following body
 
 ```
 {
     username: 'user123'
-    password: 'password123'
 }
 ```
 
@@ -58,22 +57,14 @@ Upon success the backend will log the user in, return code **200**, and the foll
 }
 ```
 
-If the username is not registered the backend will return code **400** with body
+If no username is provided the backend will return code **400** with body
 
 ```
 {
-    username: 'user123',
-    message: 'username not registered'
+    message: 'No username provided'
 }
 ```
 
-If the password does not match the username provided, code **401** will be return with body 
-
-```
-{
-    message: 'passowrd does not match username provided'
-}
-```
 
 ### GET /User_Achievements
 
