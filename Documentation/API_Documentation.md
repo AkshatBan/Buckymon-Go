@@ -156,7 +156,7 @@ This will return a list of events that the user has already completed, request b
 }
 ```
 
-The backend will return a list of events that the user has **NOT** completed yet, each event will have the following format  
+The backend will return a list of events that the user has **ALREADY** completed yet, each event will have the following format  
 
 ```
 {
