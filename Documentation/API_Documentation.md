@@ -146,6 +146,8 @@ The backend will return a list of events that the user has **NOT** completed yet
 }
 ```
 
+If the user has no more events to complete, then the backend will send error code **400**
+
 ### GET /Get_Completed_Events 
 
 This will return a list of events that the user has already completed, request body as follows 
@@ -168,4 +170,6 @@ The backend will return a list of events that the user has **ALREADY** completed
     event_description: 'sample event description'
 }
 ```
+
+If the user has not completed any events, then the backend will send error code **400**
 
