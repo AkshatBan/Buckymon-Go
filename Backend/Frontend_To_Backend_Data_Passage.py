@@ -321,16 +321,40 @@ def Get_Completed_Events():
 # }
 @app.route('/api/Log_User', methods=['POST'])
 def Log_User():
-    # Extracts the username and password from request
+    # Extracts the username from request
     userInfo = request.json
     username = userInfo['username']
-    password = userInfo['password']
-    # TODO: Fix method to return appropriate JSON bodies
-    # TODO: Figure out how team wants to log new user and password, especially if it's in a database
-# When the user logs in, a GET request will be sent to the backend with the following body:
-# {
-#    username: 'user123'
-# }
+
+    # Checks if username was not provided
+    if username == None: # TODO: Check if None or '' makes a difference in execution
+        return json.dumps({'message': 'No username provided'}), 400
+    
+    # Establishes connection to database to conduct the necessary queries
+    connection = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+    with connection:
+        with connection.cursor() as cursor:
+            query = 'SELECT * FROM User WHERE u_name = ' + '\'' + username + '\''
+            cursor.execute(query)
+            result = cursor.fetchone()
+
+        # Checks if username is registered
+        if result is None:
+            # TEST STATEMENT
+            print(f'{username} not registered in system.')
+            
+            # Logs/registers new user
+            with connection.cursor() as cursor:
+                query = 'INSERT INTO User (u_name, u_score) Values (' + username + ', 0'
+                cursor.execute(query)
+                connection.commit()
+        else:
+            print(f'{username} is in system.') # TEST STATEMENT
+            
+        return json.dumps({'username': username, 'message': 'successfully logged in'}), 200
 
 # When the user logs in, a GET request will be sent to the backend with the following body:
 # {
@@ -339,12 +363,19 @@ def Log_User():
 @app.route('/api/Get_User_Achievements', methods=['GET'])
 def Get_User_Achievements():
     # Acquires username upon GET request
+<<<<<<< HEAD
     #userInfo = request.json
     
     userInfo = {
                 'username': 'Aaron'
                }
     
+=======
+    userInfo = request.json
+    '''userInfo = {
+                'username': 'Aaron'
+               }'''
+>>>>>>> a44ac35d4620ef2442060678319f891b6e2de332
     userName = userInfo['username']
     userScore = 0
     # Establishes a table that contain user's completed achievement(s) to reference
