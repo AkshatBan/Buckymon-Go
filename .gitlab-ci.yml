@@ -13,6 +13,8 @@ variables:
 # Define job for building the application
 build-frontend:
   stage: build
+  tags:
+    - dind
   script:
     - echo "Building the frontend..."
     - docker build -f frontend.dockerfile -t frontend:cicd-build .
