@@ -6,6 +6,7 @@ CREATE TABLE User (
     u_id INT NOT NULL auto_increment,
     u_name VARCHAR(255) UNIQUE,
     u_score INT NULL,
+    u_num_events INT NULL,
     PRIMARY KEY (u_id, u_name)
 );
 ALTER TABLE User auto_increment = 10000001;
@@ -15,6 +16,8 @@ CREATE TABLE Achievements (
     a_name VARCHAR(255) NULL,
     a_score INT NULL,
     a_desc TEXT,
+    a_tag VARCHAR(255) NULL,
+    a_num_events INT NULL,
     PRIMARY KEY (a_id)
 );
 ALTER TABLE Achievements auto_increment = 20000001;
@@ -33,6 +36,7 @@ CREATE TABLE Events (
     e_name VARCHAR(255) NULL,
     e_score INT NULL,
     e_desc TEXT,
+    e_tag VARCHAR(255) NULL,
     l_id INT,
     PRIMARY KEY (e_id),
     FOREIGN KEY (l_id) REFERENCES Locations(l_id)
@@ -88,20 +92,20 @@ INSERT INTO Locations (l_name, l_lat, l_long) Values ('Allen Centennial Garden',
 INSERT INTO Locations (l_name, l_lat, l_long) Values ('Peace Park', 43.0749268686802, -89.392638586702);
 INSERT INTO Locations (l_name, l_lat, l_long) Values ('Lakeshore Path', 43.07756511084374, -89.40561113790231);
 
-INSERT INTO Events (e_name, e_score, e_desc, l_id) VALUES ('Speed Friending', 1, 'Make friends in a fun and socially low-stakes environment!', 30000004);
-INSERT INTO Events (e_name, e_score, e_desc, l_id) VALUES ('Farmer''s Market', 3, 'The must-see largest outdoor farmer''s market in the world!', 30000002);
-INSERT INTO Events (e_name, e_score, e_desc, l_id) VALUES ('Good Luck!', 1, 'Rub Honest Abe''s foot for good luck!', 30000001);
+INSERT INTO Events (e_name, e_score, e_desc, e_tag, l_id) VALUES ('Speed Friending', 1, 'Make friends in a fun and socially low-stakes environment!', 'social', 30000004);
+INSERT INTO Events (e_name, e_score, e_desc, e_tag, l_id) VALUES ('Farmer''s Market', 3, 'The must-see largest outdoor farmer''s market in the world!', 'tourism', 30000002);
+INSERT INTO Events (e_name, e_score, e_desc, e_tag, l_id) VALUES ('Good Luck!', 1, 'Rub Honest Abe''s foot for good luck!', 'tradition',30000001);
 
 -- Event Quantity Achievements
-INSERT INTO Achievements (a_name, a_score, a_desc) Values ('Complete your first event', 1, 'The first step is always the hardest. Have an extra point on us for getting through your first event!');
-INSERT INTO Achievements (a_name, a_score, a_desc) Values ('Complete 5 Events', 1, 'Unlocked when you have completed 5 events on Campus or in Madison.');
-INSERT INTO Achievements (a_name, a_score, a_desc) Values ('Complete 10 Events', 2, 'Unlocked when you have completed 10 events on Campus or in Madison.');
-INSERT INTO Achievements (a_name, a_score, a_desc) Values ('Complete 15 Events', 3, 'Unlocked when you have completed 15 events on Campus or in Madison.');
-INSERT INTO Achievements (a_name, a_score, a_desc) Values ('Complete 20 Events', 4, 'Unlocked when you have completed 20 events on Campus or in Madison.');
-INSERT INTO Achievements (a_name, a_score, a_desc) Values ('Complete 25 Events', 5, 'Unlocked when you have completed 25 events on Campus or in Madison.');
+INSERT INTO Achievements (a_name, a_score, a_desc, a_tag, a_num_events) Values ('Complete your first event', 1, 'The first step is always the hardest. Have an extra point on us for getting through your first event!', '', 1);
+INSERT INTO Achievements (a_name, a_score, a_desc, a_tag, a_num_events) Values ('Complete 5 Events', 1, 'Unlocked when you have completed 5 events on Campus or in Madison.', '', 5);
+INSERT INTO Achievements (a_name, a_score, a_desc, a_tag, a_num_events) Values ('Complete 10 Events', 2, 'Unlocked when you have completed 10 events on Campus or in Madison.', '', 10);
+INSERT INTO Achievements (a_name, a_score, a_desc, a_tag, a_num_events) Values ('Complete 15 Events', 3, 'Unlocked when you have completed 15 events on Campus or in Madison.', '', 15);
+INSERT INTO Achievements (a_name, a_score, a_desc, a_tag, a_num_events) Values ('Complete 20 Events', 4, 'Unlocked when you have completed 20 events on Campus or in Madison.', '', 20);
+INSERT INTO Achievements (a_name, a_score, a_desc, a_tag, a_num_events) Values ('Complete 25 Events', 5, 'Unlocked when you have completed 25 events on Campus or in Madison.', '', 25);
 -- Event type Achievements
-INSERT INTO Achievements (a_name, a_score, a_desc) Values ('So, what''s your major?', 3, 'Complete your first social event.');
-INSERT INTO Achievements (a_name, a_score, a_desc) Values ('Sightseeing!', 1, 'Complete your first tourism event');
-INSERT INTO Achievements (a_name, a_score, a_desc) Values ('Resist the Freshman 15', 1, 'Complete your first athletic event');
-INSERT INTO Achievements (a_name, a_score, a_desc) Values ('U-Rah-Rah!', 1, 'Complete your first badger or Madison tradition event');
-INSERT INTO Achievements (a_name, a_score, a_desc) Values ('Keeping that 4.0', 1, 'Complete your first education event');
+INSERT INTO Achievements (a_name, a_score, a_desc, a_tag, a_num_events) Values ('So, what''s your major?', 3, 'Complete your first social event.', 'social', 0);
+INSERT INTO Achievements (a_name, a_score, a_desc, a_tag, a_num_events) Values ('Sightseeing!', 1, 'Complete your first tourism event', 'tourism', 0);
+INSERT INTO Achievements (a_name, a_score, a_desc, a_tag, a_num_events) Values ('Resist the Freshman 15', 1, 'Complete your first athletic event', 'athletic', 0);
+INSERT INTO Achievements (a_name, a_score, a_desc, a_tag, a_num_events) Values ('U-Rah-Rah!', 1, 'Complete your first badger or Madison tradition event', 'tradition', 0);
+INSERT INTO Achievements (a_name, a_score, a_desc, a_tag, a_num_events) Values ('Keeping that 4.0', 1, 'Complete your first education event', 'educational', 0);
