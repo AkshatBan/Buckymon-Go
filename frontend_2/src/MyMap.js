@@ -2,10 +2,9 @@ import * as React from 'react';
 import Map, {GeolocateControl} from 'react-map-gl';
 import MyMarker from './MyMarker'
 
-function MyMap(){
+function MyMap(props){
 
     // const [selected_Marker, Set_Selected_Marker] = React.useState(null);
-
     const [markers, Set_Markers] = React.useState();
 
     // const markers =
@@ -183,8 +182,9 @@ function MyMap(){
 
 
     //fetch location data on component load
+       
     React.useEffect(() => {
-        fetch("http://127.0.0.1:5000/api/Post_Data_To_Frontend", {
+        fetch("http://127.0.0.1:5000/api/Get_List_Of_Locations", {
             method: "GET"
         })
         .then(res => {
@@ -195,43 +195,45 @@ function MyMap(){
         })
     }, [])
 
-    
 
-    return(
-        <div data-testid="map">
-            <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
-            <Map
-            mapboxAccessToken="pk.eyJ1IjoiYWFzdGhhbmEzIiwiYSI6ImNsdGM1aXU1ZjF4OWUyam8weGczeXZsNjYifQ.qglYcmv9q6XjL1NvXk9szw"
-            initialViewState={{
-                longitude: -89.401230,
-                latitude: 43.073051,
-                zoom: 14
-            }}
-            style={{width: 1440, height: 700}}
-            mapStyle="mapbox://styles/mapbox/streets-v9"
-            >
-            {/* for each location, place a marker on the map */}
-            {
-                markers ? 
-                        markers.map(marker => (
-                            <MyMarker 
-                                key={marker.id}
-                                latitude={marker.lat}
-                                longitude={marker.long}
-                                message={marker.location_name}
-                                id={marker.id}
-                            />                 
-                        ))
-                : <></>
-            }
-                <GeolocateControl 
-                    positionOptions={{ enableHighAccuracy: true }}
-                    trackUserLocation = {true}
-                    showUserLocation = {true}
-                />
-            </Map>
-        </div>
-    );
+    
+        return(
+
+            <div data-testid="map">
+                <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
+                <Map
+                mapboxAccessToken="pk.eyJ1IjoiYWFzdGhhbmEzIiwiYSI6ImNsdGM1aXU1ZjF4OWUyam8weGczeXZsNjYifQ.qglYcmv9q6XjL1NvXk9szw"
+                initialViewState={{
+                    longitude: -89.401230,
+                    latitude: 43.073051,
+                    zoom: 14
+                }}
+                style={{width: 1440, height: 700}}
+                mapStyle="mapbox://styles/mapbox/streets-v9"
+                >
+                {/* for each location, place a marker on the map */}
+                {
+                    markers ? 
+                            markers.map(marker => (
+                                <MyMarker 
+                                    key={marker.id}
+                                    latitude={marker.lat}
+                                    longitude={marker.long}
+                                    message={marker.location_name}
+                                    id={marker.id}
+                                />                 
+                            ))
+                    : <></>
+                }
+                    <GeolocateControl 
+                        positionOptions={{ enableHighAccuracy: true }}
+                        trackUserLocation = {true}
+                        showUserLocation = {true}
+                    />
+                </Map>
+                <button onClick={() => {props.Set_Logged_In(false)}}>Log Out</button>
+            </div>
+        );
 }
 
 export default MyMap;
