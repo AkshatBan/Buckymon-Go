@@ -363,19 +363,10 @@ def Log_User():
 @app.route('/api/Get_User_Achievements', methods=['GET'])
 def Get_User_Achievements():
     # Acquires username upon GET request
-<<<<<<< HEAD
-    #userInfo = request.json
-    
-    userInfo = {
-                'username': 'Aaron'
-               }
-    
-=======
     userInfo = request.json
     '''userInfo = {
                 'username': 'Aaron'
                }'''
->>>>>>> a44ac35d4620ef2442060678319f891b6e2de332
     userName = userInfo['username']
     userScore = 0
     # Establishes a table that contain user's completed achievement(s) to reference
