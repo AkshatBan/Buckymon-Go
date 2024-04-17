@@ -14,9 +14,9 @@ variables:
 # Define job for building the application
 build-frontend:
   stage: build
-  image: docker:stable
+  image: docker:20.10.17
   services:
-    - docker:stable-dind
+    - docker:20.10.17-dind
   tags:
     - dind
     - csl
