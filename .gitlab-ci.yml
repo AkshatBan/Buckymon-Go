@@ -15,8 +15,8 @@ build-frontend:
   stage: build
   script:
     - echo "Building the frontend..."
-    - docker build -f frontend.dockerfile -t $DOCKER_REGISTRY/frontend:cicd-build .
-    - docker run $DOCKER_REGISTRY/frontend:cicd-build sh -c "npm run"
+    - docker build -f frontend.dockerfile -t frontend:cicd-build .
+    - docker run frontend:cicd-build sh -c "npm run"
     # Add commands to build your application here
 
 build-backend:
@@ -44,8 +44,8 @@ test_frontend:
   stage: test
   script:
    - echo "Testing frontend..."
-   - docker pull $DOCKER_REGISTRY/frontend:cicd-build
-   - docker run $DOCKER_REGISTRY/frontend:cicd-build sh -c "npm test"
+   - docker pull frontend:cicd-build
+   - docker run frontend:cicd-build sh -c "npm test"
 
 # Define job for deploying the application
 deploy:
