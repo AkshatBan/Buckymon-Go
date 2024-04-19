@@ -426,6 +426,77 @@ def Get_User_Achievements():
     # Formats the final result in JSON format with success code 200
     return json.dumps(result), 200
 
+# A GET request from the frontend is sent to the backend with the following body:
+# {
+#    username: 'user123'
+# }
+@app.route('/api/Get_Uncompleted_Achievements', methods=['GET'])
+def Get_Uncompleted_Achievements():
+    # Gets the information needed to create the returned JSON body.
+    userInfo = request.json
+    username = userInfo['username']
+    # List of uncompleted achievements that will be updated unless user has completed all achievements
+    uncompletedAchievements = []
+
+    # Connects to the database.
+    connection = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
+
+    # Makes the necessary queries to extract information.
+    with connection:
+        # Gets all uncompleted achievements to return in JSON format
+        with connection.cursor() as cursor:
+            # Gets all achievements to extract user's uncompleted achievements
+            query = 'SELECT * FROM Achievements;'
+            cursor.execute(query)
+            achievements = cursor.fetchall()
+            # Queries through all achievements to extract user's uncompleted achievements
+            for dictionary in achievements:
+                # References an achievement ID to extract current achievement in table
+                achievementID = str(dictionary['a_id'])
+                # Make a new connection within for loop
+                connection2 = pymysql.connect(host='127.0.0.1',
+                                              user='root',
+                                              password='Jonah2004*',
+                                              database='Buckymon_Go_DB',
+                                              cursorclass=pymysql.cursors.DictCursor)
+                # Queries Achieves table to filter user's uncompleted achievements, using the current achievement ID
+                with connection2.cursor() as cursor:
+                    query = 'SELECT * FROM Achieves WHERE achieves_a_id = ' + '\'' + achievementID  + '\''
+                    cursor.execute(query)
+                    currentResult = cursor.fetchone()
+                    # Checks if user completed that achievement
+                    if currentResult['achieves_a_id'] == None:
+                        # User has not completed achievement
+                        uncompletedAchievement = {
+                            'achievement_id': dictionary['a_id'],
+                            'achievement_name': dictionary['a_name'],
+                            'achievement_score': dictionary['a_score'],
+                            'achievement_description': dictionary['a_desc']
+                        }
+
+                        # Adds uncompleted achievement to the list to return as a result
+                        uncompletedAchievements.append(uncompletedAchievement)
+                    
+                    # Otherwise, we check with the next achievement ID.
+                    
+    # Checks if user has completed all achievements
+    if uncompletedAchievements == None:
+        # User has completed all achievements
+        return json.dumps({'username': username, 'message': 'Great job! You\'ve completed everything!!!'}, 200)        
+    else:
+        # Formats body to return as a result, assuming username and uncompleted achievements were extracted.
+        result = {
+            'username': username,
+            'uncompleted_achievements': uncompletedAchievements
+        }
+
+        # Returns the formatted body in JSON and the following code.
+        return json.dumps(result), 200
+    
 # Runs the Flask application.
 if __name__ == '__main__':   
     app.run(debug = True)
