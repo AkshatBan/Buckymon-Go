@@ -482,15 +482,20 @@ def Get_Uncompleted_Achievements():
                         uncompletedAchievements.append(uncompletedAchievement)
                     
                     # Otherwise, we check with the next achievement ID.
-            
-    # Formats body to return as a result, assuming username and uncompleted achievements were extracted.
-    result = {
-        'username': username,
-        'uncompleted_achievements': uncompletedAchievements
-    }
+    # Checks if user has completed all achievements
+    if uncompletedAchievements == None:
+        # User has completed all achievements
+        return json.dumps({'username': username, 'message': 'Great job! You\'ve completed everything!!!'}, 200)        
+    else:
+        # Formats body to return as a result, assuming username and uncompleted achievements were extracted.
+        result = {
+            'username': username,
+            'uncompleted_achievements': uncompletedAchievements
+        }
 
-    # Returns the formatted body in JSON and the following code.
-    return json.dumps(result), 200
+        # Returns the formatted body in JSON and the following code.
+        return json.dumps(result), 200
+    
 # Runs the Flask application.
 if __name__ == '__main__':   
     app.run(debug = True)
