@@ -482,6 +482,7 @@ def Get_Uncompleted_Achievements():
                         uncompletedAchievements.append(uncompletedAchievement)
                     
                     # Otherwise, we check with the next achievement ID.
+                    
     # Checks if user has completed all achievements
     if uncompletedAchievements == None:
         # User has completed all achievements
