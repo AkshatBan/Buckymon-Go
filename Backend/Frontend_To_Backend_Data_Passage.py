@@ -426,6 +426,25 @@ def Get_User_Achievements():
     # Formats the final result in JSON format with success code 200
     return json.dumps(result), 200
 
+# A GET request from the frontend is sent to the backend with the following body:
+# {
+#    username: 'user123'
+# }
+@app.route('/api/Get_Uncompleted_Achievements', methods=['GET'])
+def Get_Uncompleted_Achievements():
+    # Gets the information needed to create the returned JSON body.
+    userInfo = request.json
+    username = userInfo['username']
+    uncompletedAchievements = []
+
+    # TODO: Connect to the database.
+
+    # TODO: Make the necessary queries to extract information.
+
+    # TODO: Format body to return as a result.
+
+    # TODO: Return the formatted body in JSON.
+
 # Runs the Flask application.
 if __name__ == '__main__':   
     app.run(debug = True)
