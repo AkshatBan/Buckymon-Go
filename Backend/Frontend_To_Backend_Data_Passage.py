@@ -473,21 +473,21 @@ def Get_Uncompleted_Achievements():
                     cursor.execute(query)
                     currentResult = cursor.fetchone()
                     # Creates the user's completed achievement to add later
-                    userAchievement = {
+                    uncompletedAchievement = {
                         'achievement_id': currentResult['a_id'],
                         'achievement_name': currentResult['a_name'],
                         'achievement_score': currentResult['a_score'],
                         'achievement_description': currentResult['a_desc']
                     }
-                    uncompletedAchievements.append(userAchievement)
+                    uncompletedAchievements.append(uncompletedAchievement)
     # Formats body to return as a result, assuming username and uncompleted achievements were extracted.
     result = {
         'username': username,
         'uncompleted_achievements': uncompletedAchievements
     }
 
-    # TODO: Return the formatted body in JSON.
-
+    # Returns the formatted body in JSON and the following code.
+    return json.dumps(result), 200
 # Runs the Flask application.
 if __name__ == '__main__':   
     app.run(debug = True)
