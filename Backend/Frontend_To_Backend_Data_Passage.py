@@ -435,6 +435,7 @@ def Get_Uncompleted_Achievements():
     # Gets the information needed to create the returned JSON body.
     userInfo = request.json
     username = userInfo['username']
+    # List of uncompleted achievements that will be updated unless user has completed all achievements
     uncompletedAchievements = []
 
     # Connects to the database.
@@ -444,42 +445,44 @@ def Get_Uncompleted_Achievements():
                                 database='Buckymon_Go_DB',
                                 cursorclass=pymysql.cursors.DictCursor)
 
-    # TODO: Make the necessary queries to extract information.
+    # Makes the necessary queries to extract information.
     with connection:
+        # Gets all uncompleted achievements to return in JSON format
         with connection.cursor() as cursor:
-            # Obtains user ID to reference when we extract user's uncompleted achievements
-            query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + username + '\''
+            # Gets all achievements to extract user's uncompleted achievements
+            query = 'SELECT * FROM Achievements;'
             cursor.execute(query)
-            result = cursor.fetchone()
-            userId = result['u_id']
-
-        # TODO: Get all uncompleted achievements to return in JSON format
-        with connection.cursor() as cursor:
-            query = 'SELECT achieves_a_id FROM Achieves WHERE achieves_u_id = ' + '\'' + str(userId) + '\''
-            cursor.execute(query)
-            achieved = cursor.fetchall()
-            # Queries through all achievements to extract user's completed achievements
-            for dictionary in achieved:
-                # References an achieved ID to extract user's completed achievement(s)
-                achievedID = str(dictionary['achieves_a_id'])
-                # Make a new connection to within for loop
+            achievements = cursor.fetchall()
+            # Queries through all achievements to extract user's uncompleted achievements
+            for dictionary in achievements:
+                # References an achievement ID to extract current achievement in table
+                achievementID = str(dictionary['a_id'])
+                # Make a new connection within for loop
                 connection2 = pymysql.connect(host='127.0.0.1',
                                               user='root',
                                               password='Jonah2004*',
                                               database='Buckymon_Go_DB',
                                               cursorclass=pymysql.cursors.DictCursor)
+                # Queries Achieves table to filter user's uncompleted achievements, using the current achievement ID
                 with connection2.cursor() as cursor:
-                    query = 'SELECT * FROM Achievements WHERE a_id = ' + '\'' + achievedID  + '\''
+                    query = 'SELECT * FROM Achieves WHERE achieves_a_id = ' + '\'' + achievementID  + '\''
                     cursor.execute(query)
                     currentResult = cursor.fetchone()
-                    # Creates the user's completed achievement to add later
-                    uncompletedAchievement = {
-                        'achievement_id': currentResult['a_id'],
-                        'achievement_name': currentResult['a_name'],
-                        'achievement_score': currentResult['a_score'],
-                        'achievement_description': currentResult['a_desc']
-                    }
-                    uncompletedAchievements.append(uncompletedAchievement)
+                    # Checks if user completed that achievement
+                    if currentResult['achieves_a_id'] == None:
+                        # User has not completed achievement
+                        uncompletedAchievement = {
+                            'achievement_id': dictionary['a_id'],
+                            'achievement_name': dictionary['a_name'],
+                            'achievement_score': dictionary['a_score'],
+                            'achievement_description': dictionary['a_desc']
+                        }
+
+                        # Adds uncompleted achievement to the list to return as a result
+                        uncompletedAchievements.append(uncompletedAchievement)
+                    
+                    # Otherwise, we check with the next achievement ID.
+            
     # Formats body to return as a result, assuming username and uncompleted achievements were extracted.
     result = {
         'username': username,
