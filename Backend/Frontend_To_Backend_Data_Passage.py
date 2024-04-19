@@ -445,7 +445,41 @@ def Get_Uncompleted_Achievements():
                                 cursorclass=pymysql.cursors.DictCursor)
 
     # TODO: Make the necessary queries to extract information.
+    with connection:
+        with connection.cursor() as cursor:
+            # Obtains user ID to reference when we extract user's uncompleted achievements
+            query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + username + '\''
+            cursor.execute(query)
+            result = cursor.fetchone()
+            userId = result['u_id']
 
+        # TODO: Get all uncompleted achievements to return in JSON format
+        with connection.cursor() as cursor:
+            query = 'SELECT achieves_a_id FROM Achieves WHERE achieves_u_id = ' + '\'' + str(userId) + '\''
+            cursor.execute(query)
+            achieved = cursor.fetchall()
+            # Queries through all achievements to extract user's completed achievements
+            for dictionary in achieved:
+                # References an achieved ID to extract user's completed achievement(s)
+                achievedID = str(dictionary['achieves_a_id'])
+                # Make a new connection to within for loop
+                connection2 = pymysql.connect(host='127.0.0.1',
+                                              user='root',
+                                              password='Jonah2004*',
+                                              database='Buckymon_Go_DB',
+                                              cursorclass=pymysql.cursors.DictCursor)
+                with connection2.cursor() as cursor:
+                    query = 'SELECT * FROM Achievements WHERE a_id = ' + '\'' + achievedID  + '\''
+                    cursor.execute(query)
+                    currentResult = cursor.fetchone()
+                    # Creates the user's completed achievement to add later
+                    userAchievement = {
+                        'achievement_id': currentResult['a_id'],
+                        'achievement_name': currentResult['a_name'],
+                        'achievement_score': currentResult['a_score'],
+                        'achievement_description': currentResult['a_desc']
+                    }
+                    uncompletedAchievements.append(userAchievement)
     # Formats body to return as a result, assuming username and uncompleted achievements were extracted.
     result = {
         'username': username,
