@@ -437,11 +437,20 @@ def Get_Uncompleted_Achievements():
     username = userInfo['username']
     uncompletedAchievements = []
 
-    # TODO: Connect to the database.
+    # Connects to the database.
+    connection = pymysql.connect(host='127.0.0.1',
+                                user='root',
+                                password='Jonah2004*',
+                                database='Buckymon_Go_DB',
+                                cursorclass=pymysql.cursors.DictCursor)
 
     # TODO: Make the necessary queries to extract information.
 
-    # TODO: Format body to return as a result.
+    # Formats body to return as a result, assuming username and uncompleted achievements were extracted.
+    result = {
+        'username': username,
+        'uncompleted_achievements': uncompletedAchievements
+    }
 
     # TODO: Return the formatted body in JSON.
 
