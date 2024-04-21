@@ -47,6 +47,57 @@ class TestFlaskAPI(unittest.TestCase):
         self.assertEqual(len(response.json), 2)
         
     @patch('app.request') # replaces the request import with a mock import
+    @patch('app.pymysql.connect') # replaces pymysql connect import with a mock    
+    def Test_Complete_Event(self, mock_request, mock_connect):
+        # replaces request.json function with a mock fcn that returns
+        # hard-coded dict
+        mock_request.json = MagicMock(return_value={"username": "Aaron",
+                                                    "event_id": 40000002})
+        
+        # mocks the connection.cursor() object
+        mock_cursor = MagicMock()
+        mock_cursor.execute = MagicMock()
+        # mock cursor.fetchone, having it return hardcoded dict
+        fetchoneRets = [{"u_id": 1},
+                        {"e_score": 10},
+                        {"u_score": 30}]
+        fetchoneMock = MagicMock(side_effect=fetchoneRets)
+        mock_cursor.fetchone = fetchoneMock
+        
+        # Set up mock connection object
+        mock_connect.return_value = MagicMock()
+        mock_connect.return_value.commit = MagicMock()
+        mock_connect.return_value.cursor = mock_cursor
+        
+        # gets the response by calling the test client
+        # note: this response is not a mock
+        response = self.client.get('/api/Complete_Event')
+        
+        # Assertations
+        
+        # check that the query to write into the Completes db was executed
+        query1 = 'INSERT INTO Completes (completes_u_id, completes_e_id) Values (' + str(1) + ',' + str(40000002) + ')'
+        mock_cursor.execute.assert_called_with(query1)
+        
+        # check that the query to update the user score in User db was 
+        # executed
+        query2 = 'UPDATE User SET u_score = ' + str(40) + ' WHERE u_name = ' + '\'' + "Aaron" + '\''
+        mock_cursor.execute.assert_called_with(query2)
+        
+        # make sure that commit was also called
+        mock_connect.return_value.commit.assert_called_once()
+        
+        # assert that the retrieved response is successful
+        self.assertEqual(response.status_code, 200)
+        
+        # check that we get an expected updated score of 40
+        expected = {
+            'updated_score': 40
+        }
+        
+        self.assertEqual(response.json, json.dumps(expected))
+        
+    @patch('app.request') # replaces the request import with a mock import
     @patch('app.pymysql.connect') # replaces pymysql connect import with a mock 
     def Test_Get_User_Achievements(self, mock_request, mock_connect):
         # replaces request.json function with a mock fcn that returns
