@@ -96,16 +96,27 @@ class TestFlaskAPI(unittest.TestCase):
         
         # mocks connection(), having it return a different mock cursor 
         # depending on when it is called
+        mock_conn1 = MagicMock()
+        mock_conn1.cursor = MagicMock(side_effect=[mock_cursor1, mock_cursor2])
+        mock_conn2 = MagicMock()
+        mock_conn2.cursor = MagicMock(return_value=mock_cursor3)
+        mock_conn3 = MagicMock()
+        mock_conn3.cursor = MagicMock(return_value=mock_cursor4)
+        
         cursorMocks = [mock_cursor1, mock_cursor2, mock_cursor3, mock_cursor4]
-        mock_connect.return_value = MagicMock()
-        mock_connect.return_value.cursor = MagicMock(side_effect=cursorMocks)
+        mockConnList = [mock_conn1, mock_conn2, mock_conn3]
+        mock_connect.return_value = MagicMock(side_effect=mockConnList)
         
         # gets the response by calling the test client
         # note: this response is not a mock
-        response = self.client.get('/api/Get_Data_From_Frontend')
+        response = self.client.get('/api/Get_User_Achievements')
         
-        # asser that the retrieved response is successful
+        # assert that the retrieved response is successful
         self.assertEqual(response.status_code, 200)
+        
+        # assert that connection(), cursor(), fetchone(), and fetchall()
+        # functions were called the appropriate number of times
+        self.assertEqual(mock_connect.call_count, )
 
 
 if __name__ == '__main__':
