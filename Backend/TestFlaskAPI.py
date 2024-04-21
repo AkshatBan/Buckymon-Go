@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 from Frontend_To_Backend_Data_Passage import app
+import json
 
 # Uses python's unittest mocking library to mock requests to the client
 # In the future, may need to implement mocking of the sql db using other 
@@ -58,7 +59,7 @@ class TestFlaskAPI(unittest.TestCase):
         mock_cursor1 = MagicMock()
         mock_cursor1.execute = MagicMock()
         # mock cursor.fetchone, having it return hardcoded dict
-        fetchoneMock = MagicMock(return_value={"u_id": 1, "u_score": 10})
+        fetchoneMock = MagicMock(return_value={"u_id": 1, "u_score": 30})
         mock_cursor1.fetchone = fetchoneMock
         
         # mock_cursor2 mocks the second cursor() call
@@ -114,9 +115,35 @@ class TestFlaskAPI(unittest.TestCase):
         # assert that the retrieved response is successful
         self.assertEqual(response.status_code, 200)
         
-        # assert that connection(), cursor(), fetchone(), and fetchall()
+        # assert that connection() and cursor()
         # functions were called the appropriate number of times
-        self.assertEqual(mock_connect.call_count, )
+        self.assertEqual(mock_connect.call_count, 3)
+        self.assertEqual(mock_conn1.cursor.call_count, 2)
+        self.assertEqual(mock_conn2.cursor.call_count, 1)
+        self.assertEqual(mock_conn3.cursor.call_count, 1)
+        
+        # check that we get the expected result
+        achiev1 = {
+            'achievement_id': 1,
+            'achievement_name': "first",
+            'achievement_score': 10,
+            'achievement_description': "first achev"
+        }
+        achiev2 = {
+            'achievement_id': 2,
+            'achievement_name': "second",
+            'achievement_score': 20,
+            'achievement_description': "second achev"
+        }
+        completedAchievements = [achiev1, achiev2]
+        
+        expected = {
+            'username': "Aaron",
+            'user_score' : 30,
+            'completed_achievements': completedAchievements
+        }
+        
+        self.assertEqual(response.json, json.dumps(expected))
 
 
 if __name__ == '__main__':
