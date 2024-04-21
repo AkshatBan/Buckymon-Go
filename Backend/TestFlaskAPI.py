@@ -56,6 +56,7 @@ class TestFlaskAPI(unittest.TestCase):
         
         # mocks the connection.cursor() object
         mock_cursor = MagicMock()
+        mock_cursor.close = MagicMock()
         mock_cursor.execute = MagicMock()
         # mock cursor.fetchone, having it return hardcoded dict
         fetchoneRets = [{"u_id": 1},
@@ -67,7 +68,7 @@ class TestFlaskAPI(unittest.TestCase):
         # Set up mock connection object
         mock_connect.return_value = MagicMock()
         mock_connect.return_value.commit = MagicMock()
-        mock_connect.return_value.cursor = mock_cursor
+        mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
         
         # gets the response by calling the test client
         # note: this response is not a mock
@@ -95,7 +96,59 @@ class TestFlaskAPI(unittest.TestCase):
             'updated_score': 40
         }
         
-        self.assertEqual(response.json, json.dumps(expected))
+        self.assertEqual(response.json, expected)
+    
+    @patch('app.request') # replaces the request import with a mock import
+    @patch('app.pymysql.connect') # replaces pymysql connect import with a mock    
+    def Test_Active_Events(self, mock_request, mock_connect):
+        # replaces request.json function with a mock fcn that returns
+        # hard-coded dict
+        mock_request.json = MagicMock(return_value={"username": "Aaron"})
+        
+        # setting up the mock cursor with mock values and fcns
+        mock_cursor = MagicMock()
+        mock_cursor.close = MagicMock()
+        fetchoneDicts = [{"u_id": 1},
+                         {"l_lat": 43.0719, "l_long": -89.408, "l_name": "Union South"},
+                         {"l_lat": 43.0757, "l_long": -89.4040, "l_name": "Bascom Hall"}]
+        completedEventDicts = [{"completes_e_id": 2},
+                               {"completes_e_id": 3}]
+        uncompletedEventDicts = [{"e_id": 4, "e_name": "four", "l_id": 4, "e_score": 10, "e_desc": "the number after three"},
+                                 {"e_id": 5, "e_name": "five", "l_id": 5, "e_score": 20, "e_desc": "the number after four"}]
+        mock_cursor.execute = MagicMock()
+        mock_cursor.fetchone = MagicMock(side_effect=fetchoneDicts)
+        mock_cursor.fetchall = MagicMock(side_effect=[completedEventDicts, uncompletedEventDicts])
+        
+        # attaching the mock cursor to the mock connection 
+        mock_connect.return_value = MagicMock()
+        mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
+        mock_connect.return_value.close = MagicMock()
+        
+        # gets the response by calling the test client
+        # note: this response is not a mock
+        response = self.client.get('/api/Active_Events')
+        
+        expected = [
+            {
+                "event_id": 4,
+                "lat": 43.0719,
+                "long": -89.408,
+                "location_name": "Union South",
+                "event_score": 10, 
+                "event_description": "the number after three"
+            },
+            {
+                "event_id": 5,
+                "lat": 43.0757,
+                "long": -89.4040,
+                "location_name": "Bascom Hall",
+                "event_score": 20, 
+                "event_description": "the number after four"
+             }
+        ]
+        
+        self.assertEqual(response.json, expected)
+        
         
     @patch('app.request') # replaces the request import with a mock import
     @patch('app.pymysql.connect') # replaces pymysql connect import with a mock 
@@ -194,7 +247,7 @@ class TestFlaskAPI(unittest.TestCase):
             'completed_achievements': completedAchievements
         }
         
-        self.assertEqual(response.json, json.dumps(expected))
+        self.assertEqual(response.json, expected)
 
 
 if __name__ == '__main__':
