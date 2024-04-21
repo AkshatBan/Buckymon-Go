@@ -2,11 +2,13 @@
 FROM mysql:latest
 
 # Setting up the environment variables
-ENV MYSQL_ROOT_PASSWORD=ShXoPIL7d*%
+ENV MYSQL_ROOT_PASSWORD=databasemysql
 
 
 # Copy the DB setup and test scripts into the container
-COPY db_setup.sql db_test.sql clean_db.sql /docker-entrypoint-initdb.d/
+COPY db_setup.sql /docker-entrypoint-initdb.d/
+COPY db_test.sql .
+COPY clean_db.sql .
 
 # Expose port
 EXPOSE 3306

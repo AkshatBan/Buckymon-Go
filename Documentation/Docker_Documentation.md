@@ -79,6 +79,15 @@ registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/
 be sure to replace the `frontend` and `image` with the appropriate 
 substitutions.
 
+If that doesn't work right away, try the following command:
+`docker tag my_mysql_image registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go/my_mysql_image`
+Be sure to replace `my_mysql_image` with the image name you specified above.
+
 ## Where to find Docker Images
 Head over to the git lab project and you will find the images in `Deploy 
 → Container Registry`
+
+## How to run the Docker Images in containers
+* To run any any of the images in the registry, next to each image in registry there is an icon with the subtitle 'Copy Image Path'
+* Head over to a terminal and do a `docker pull [image path]`
+* Now that you have the image you can do docker run with that image path, but please refer to the creator of image for ports and other flags to consider while running 

@@ -1,0 +1,60 @@
+# Defines stages that will be executed in the pipeline
+stages:
+  - build
+  - test
+  - deploy
+
+# Define variables that will be used in the pipeline
+variables:
+  DATABASE_IMAGE_NAME: "database_docker_img"
+  DOCKER_REGISTRY: "registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go/"
+  DOCKER_IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
+
+# Define job for building the application
+build-frontend:
+  stage: build
+  script:
+    - echo "Building the frontend..."
+    - docker build -f frontend.dockerfile -t $DOCKER_REGISTRY/frontend:cicd-build .
+    - docker run $DOCKER_REGISTRY/frontend:cicd-build sh -c "npm run"
+    # Add commands to build your application here
+
+build-backend:
+  stage: build
+  script:
+    - echo "Building the backend..."
+    # Add commands to build your application here
+
+build-database:
+  stage: build
+  script:
+    - echo "Building the database..."
+    - docker pull $DOCKER_REGISTRY/$DATABASE_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - docker run $DOCKER_REGISTRY/$DATABASE_IMAGE_NAME:$DOCKER_IMAGE_TAG sh -c 'mysql -u bansal25 -p ShXoPIL7d*% < db_setup.sql'
+    # Add commands to build your application here
+
+# Define job for testing the application
+test:
+  stage: test
+  script:
+    - echo "Running tests..."
+    # Add commands to run your tests here
+
+test_frontend:
+  stage: test
+  script:
+   - echo "Testing frontend..."
+   - docker pull $DOCKER_REGISTRY/frontend:cicd-build
+   - docker run $DOCKER_REGISTRY/frontend:cicd-build sh -c "npm test"
+
+# Define job for deploying the application
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying application..."
+    # Add commands to deploy your application here
+  environment:
+    name: production
+    url: "https://yourapp.com"
+  only:
+    - main
