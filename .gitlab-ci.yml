@@ -7,16 +7,24 @@ stages:
 # Define variables that will be used in the pipeline
 variables:
   DATABASE_IMAGE_NAME: "database_docker_img"
-  DOCKER_REGISTRY: "registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go/"
+  DOCKER_REGISTRY: "registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go"
   DOCKER_IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
+  DOCKER_TLS_CERTDIR: "/certs"
 
 # Define job for building the application
 build-frontend:
   stage: build
+  image: docker:20.10.17
+  services:
+    - docker:20.10.17-dind
+  tags:
+    - dind
+    - csl
+    - docker
   script:
     - echo "Building the frontend..."
-    - docker build -f frontend.dockerfile -t $DOCKER_REGISTRY/frontend:cicd-build .
-    - docker run $DOCKER_REGISTRY/frontend:cicd-build sh -c "npm run"
+    - docker build -f frontend.dockerfile -t frontend:cicd-build .
+    - docker run frontend:cicd-build sh -c "npm run"
     # Add commands to build your application here
 
 build-backend:
@@ -44,8 +52,8 @@ test_frontend:
   stage: test
   script:
    - echo "Testing frontend..."
-   - docker pull $DOCKER_REGISTRY/frontend:cicd-build
-   - docker run $DOCKER_REGISTRY/frontend:cicd-build sh -c "npm test"
+   - docker pull frontend:cicd-build
+   - docker run frontend:cicd-build sh -c "npm test"
 
 # Define job for deploying the application
 deploy:
