@@ -24,6 +24,7 @@ Returns a list of location data with each location with the following format
     long: -89.408,
     location_name: 'Union South',
     event_desc: 'description of even happening at this location'
+    event_id: 40000001
 }
 ```
 ```
@@ -142,6 +143,7 @@ The backend will return a list of events that the user has **NOT** completed yet
     long: -89.408,
     location_name: 'Union South',
     event_score: 3,
+    event_id: "Name of Event"
     event_description: 'sample event description'
 }
 ```
@@ -167,6 +169,7 @@ The backend will return a list of events that the user has **ALREADY** completed
     long: -89.408,
     location_name: 'Union South',
     event_score: 3,
+    event_id: "Name of Event"
     event_description: 'sample event description'
 }
 ```
