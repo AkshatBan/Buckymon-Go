@@ -486,7 +486,7 @@ def Get_Uncompleted_Achievements():
     # Checks if user has completed all achievements
     if uncompletedAchievements == None:
         # User has completed all achievements
-        return json.dumps({'username': username, 'message': 'Great job! You\'ve completed everything!!!'}, 200)        
+        return json.dumps({'username': username, 'completed_achievements': 'Great job! You\'ve completed everything!!!'}, 400)        
     else:
         # Formats body to return as a result, assuming username and uncompleted achievements were extracted.
         result = {
