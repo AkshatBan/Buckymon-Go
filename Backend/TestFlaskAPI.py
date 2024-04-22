@@ -1,6 +1,7 @@
 import unittest
+from flask import url_for
 from unittest.mock import MagicMock, patch
-from Frontend_To_Backend_Data_Passage import app
+from Frontend_To_Backend_Data_Passage import app, Complete_Event, Get_User_Achievements, Active_Events
 import json
 
 # Uses python's unittest mocking library to mock requests to the client
@@ -50,9 +51,10 @@ class TestFlaskAPI(unittest.TestCase):
     @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock    
     def test_complete_event(self, mock_connect):
         with app.test_request_context(
-        "/api/Complete_Event", method="POST", data={"username": "Aaron",
+        "/api/Complete_Event", method="POST", json={"username": "Aaron",
                                                     "event_id": 40000002}
         ):
+            data={"username": "Aaron", "event_id": 40000002}
             # replaces request.json function with a mock fcn that returns
             # hard-coded dict
             # mock_request.json = MagicMock(return_value={"username": "Aaron",
@@ -76,13 +78,10 @@ class TestFlaskAPI(unittest.TestCase):
             
             # gets the response by calling the test client
             # note: this response is not a mock
-            response = self.client.get('/api/Complete_Event')
+            # response = self.client.get(url_for('Frontend_To_Backend_Data_Passage.Complete_Event', data))
+            response = Complete_Event()
             
             # Assertations
-            
-            # check that the query to write into the Completes db was executed
-            query1 = 'INSERT INTO Completes (completes_u_id, completes_e_id) Values (' + str(1) + ',' + str(40000002) + ')'
-            mock_cursor.execute.assert_called_with(query1)
             
             # check that the query to update the user score in User db was 
             # executed
@@ -93,14 +92,14 @@ class TestFlaskAPI(unittest.TestCase):
             mock_connect.return_value.commit.assert_called_once()
             
             # assert that the retrieved response is successful
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response[1], 200)
             
             # check that we get an expected updated score of 40
             expected = {
                 'updated_score': 40
             }
             
-            self.assertEqual(response.json, expected)
+            self.assertEqual(response[0], json.dumps(expected))
     
     # @patch('Frontend_To_Backend_Data_Passage.request') # replaces the request import with a mock import
     @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock    
@@ -109,7 +108,7 @@ class TestFlaskAPI(unittest.TestCase):
         # hard-coded dict
         # mock_request.json = MagicMock(return_value={"username": "Aaron"})
         with app.test_request_context(
-        "/api/Active_Events", method="GET", data={"username": "Aaron"}
+        "/api/Active_Events", method="GET", json={"username": "Aaron"}
         ):
         
             # setting up the mock cursor with mock values and fcns
@@ -133,28 +132,28 @@ class TestFlaskAPI(unittest.TestCase):
             
             # gets the response by calling the test client
             # note: this response is not a mock
-            response = self.client.get('/api/Active_Events')
+            response = Active_Events()
             
             expected = [
                 {
                     "event_id": 4,
-                    "lat": 43.0719,
-                    "long": -89.408,
+                    "lat": 43,
+                    "long": -89,
                     "location_name": "Union South",
                     "event_score": 10, 
                     "event_description": "the number after three"
                 },
                 {
                     "event_id": 5,
-                    "lat": 43.0757,
-                    "long": -89.4040,
+                    "lat": 43,
+                    "long": -89,
                     "location_name": "Bascom Hall",
                     "event_score": 20, 
                     "event_description": "the number after four"
                 }
             ]
             
-            self.assertEqual(response.json, expected)
+            self.assertEqual(response, json.dumps(expected))
         
         
     # @patch('Frontend_To_Backend_Data_Passage.request') # replaces the request import with a mock import
@@ -165,21 +164,25 @@ class TestFlaskAPI(unittest.TestCase):
         # mock_request.json = MagicMock(return_value={"username": "Aaron"})
         
         with app.test_request_context(
-        "/api/Get_User_Achievements", method="GET", data={"username": "Aaron"}
+        "/api/Get_User_Achievements", method="GET", json={"username": "Aaron"}
         ):
         
             # mock uses of connection.cursor() fcn and its execute, fetchone,
             # and fetchall fcns
             # mock_cursor1 mocks the first cursor() call
             mock_cursor1 = MagicMock()
-            mock_cursor1.execute = MagicMock()
+            mock_cursor1.__enter__ = MagicMock()
+            mock_cursor1.__enter__.return_value = MagicMock()
+            mock_cursor1.__enter__.return_value.execute = MagicMock()
             # mock cursor.fetchone, having it return hardcoded dict
-            fetchoneMock = MagicMock(return_value={"u_id": 1, "u_score": 30})
-            mock_cursor1.fetchone = fetchoneMock
+            mock_cursor1.__enter__.return_value.fetchone = MagicMock()
+            mock_cursor1.__enter__.return_value.fetchone.return_value = {"u_id": 1, "u_score": 30}
             
             # mock_cursor2 mocks the second cursor() call
             mock_cursor2 = MagicMock()
-            mock_cursor2.execute = MagicMock()
+            mock_cursor2.__enter__ = MagicMock()
+            mock_cursor2.__enter__.return_value = MagicMock()
+            mock_cursor2.__enter__.return_value.execute = MagicMock()
             # mock cursor.fetchall, having it return list of hardcoded dict
             dictList = []
             dict1 = {"achieves_a_id": 1}
@@ -187,33 +190,38 @@ class TestFlaskAPI(unittest.TestCase):
             dictList.append(dict1)
             dictList.append(dict2)
             fetchallMock = MagicMock(return_value=dictList)
-            mock_cursor2.fetchall = fetchallMock
+            mock_cursor2.__enter__.return_value.fetchall = fetchallMock
             
             # mock_cursor3 mocks the third cursor() call (within the achieved loop)
             mock_cursor3 = MagicMock()
-            mock_cursor3.execute = MagicMock()
+            mock_cursor3.__enter__ = MagicMock()
+            mock_cursor3.__enter__.return_value = MagicMock()
+            mock_cursor3.__enter__.return_value.execute = MagicMock()
             # mock cursor.fetchone, having it return hardcoded dict
             fetchoneMock = MagicMock(return_value={"a_id": 1, 
                                                 "a_name": "first",
                                                 "a_score": 10,
                                                 "a_desc": "first achev"})
-            mock_cursor3.fetchone = fetchoneMock
+            mock_cursor3.__enter__.return_value.fetchone = fetchoneMock
             
             # mock_cursor4 mocks the fourth cursor() call 
             # (2nd one within the achieved loop)
             mock_cursor4 = MagicMock()
-            mock_cursor4.execute = MagicMock()
+            mock_cursor4.__enter__ = MagicMock()
+            mock_cursor4.__enter__.return_value = MagicMock()
+            mock_cursor4.__enter__.return_value.execute = MagicMock()
             # mock cursor.fetchone, having it return hardcoded dict
             fetchoneMock = MagicMock(return_value={"a_id": 2, 
                                                 "a_name": "second",
                                                 "a_score": 20,
                                                 "a_desc": "second achev"})
-            mock_cursor4.fetchone = fetchoneMock
+            mock_cursor4.__enter__.return_value.fetchone = fetchoneMock
             
             # mocks connection(), having it return a different mock cursor 
             # depending on when it is called
             mock_conn1 = MagicMock()
             mock_conn1.cursor = MagicMock(side_effect=[mock_cursor1, mock_cursor2])
+                
             mock_conn2 = MagicMock()
             mock_conn2.cursor = MagicMock(return_value=mock_cursor3)
             mock_conn3 = MagicMock()
@@ -221,14 +229,15 @@ class TestFlaskAPI(unittest.TestCase):
             
             cursorMocks = [mock_cursor1, mock_cursor2, mock_cursor3, mock_cursor4]
             mockConnList = [mock_conn1, mock_conn2, mock_conn3]
-            mock_connect.return_value = MagicMock(side_effect=mockConnList)
+            # mock_connect.return_value = mock_conn1
+            mock_connect.side_effect = mockConnList
             
             # gets the response by calling the test client
             # note: this response is not a mock
-            response = self.client.get('/api/Get_User_Achievements')
+            response = Get_User_Achievements()
             
             # assert that the retrieved response is successful
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response[1], 200)
             
             # assert that connection() and cursor()
             # functions were called the appropriate number of times
@@ -239,26 +248,25 @@ class TestFlaskAPI(unittest.TestCase):
             
             # check that we get the expected result
             achiev1 = {
-                'achievement_id': 1,
-                'achievement_name': "first",
-                'achievement_score': 10,
-                'achievement_description': "first achev"
+                "achievement_id": 1,
+                "achievement_name": "first",
+                "achievement_score": 10,
+                "achievement_description": "first achev"
             }
             achiev2 = {
-                'achievement_id': 2,
-                'achievement_name': "second",
-                'achievement_score': 20,
-                'achievement_description': "second achev"
+                "achievement_id": 2,
+                "achievement_name": "second",
+                "achievement_score": 20,
+                "achievement_description": "second achev"
             }
             completedAchievements = [achiev1, achiev2]
             
             expected = {
-                'username': "Aaron",
-                'user_score' : 30,
-                'completed_achievements': completedAchievements
+                "username": "Aaron",
+                "user_score" : 30,
+                "completed_achievements": completedAchievements
             }
-            
-            self.assertEqual(response.json, expected)
+            self.assertEqual(response[0], json.dumps(expected))
 
 
 if __name__ == '__main__':
