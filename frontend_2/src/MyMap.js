@@ -5,7 +5,9 @@ import MyMarker from './MyMarker'
 function MyMap(props){
 
     // const [selected_Marker, Set_Selected_Marker] = React.useState(null);
-    const [markers, Set_Markers] = React.useState();
+    // const [markers, Set_Markers] = React.useState();
+    // const [completed_events, Set_Completed_Events] = React.useState([]);
+    // const [active_events, Set_Active_Events] = React.useState([]);
 
     // const markers =
     // [
@@ -25,7 +27,6 @@ function MyMap(props){
     //         id: 3,
     //         lat: 43.0762,
     //         long: -89.4000,
-    //         location_name: "Memorial Union"
     //     },
     //     {
     //         id: 4,
@@ -178,7 +179,28 @@ function MyMap(props){
     //         location_name: "Lakeshore Path"
     //     }
     // ];
-    
+
+    // const active_events = [
+    //     {
+    //         event_id: 1,
+    //         lat: 43.0753,
+    //         long: -89.4034,
+    //         location_name: "Bascom Hall",
+    //         event_score: 1,
+    //         event_description: 'Rub Honest Abe\'s foot for good luck!'
+    //     }
+    // ]
+
+    // const completed_events = [
+    //     {
+    //         event_id: 2,
+    //         lat: 43.0720,
+    //         long: -89.4076,
+    //         location_name: "Union South",
+    //         event_score: 3,
+    //         event_description: 'Go Bowling at the Union South bowling alley.'   
+    //     }
+    // ]
 
 
     //fetch location data on component load
@@ -195,8 +217,53 @@ function MyMap(props){
         })
     }, [])
 
+    React.useEffect(() => {
+        fetch("http://127.0.0.1:5000/api/Active_Events", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: props.current_user
+            })
+        })
+        .then(res => {
+            if(res.status === 200){
+                return res.json()
+            }
+            else if(res.status === 400){
+                return []
+            }
+        })
+        .then(data => {
+            Set_Active_Events(data);
+        })
+    }, [])
 
-    
+    React.useEffect(() => {
+        fetch("http://127.0.0.1:5000/api/Get_Completed_Events", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: props.current_user
+            })
+        })
+        .then(res => {
+            if(res.status === 200){
+                return res.json()
+            }
+            else if(res.status === 400){
+                return []
+            }
+        })
+        .then(data => {
+            Set_Completed_Events(data);
+        })
+    }, [])
+
+
         return(
 
             <div data-testid="map">
@@ -214,15 +281,27 @@ function MyMap(props){
                 {/* for each location, place a marker on the map */}
                 {
                     markers ? 
-                            markers.map(marker => (
-                                <MyMarker 
-                                    key={marker.id}
-                                    latitude={marker.lat}
-                                    longitude={marker.long}
-                                    message={marker.location_name}
-                                    id={marker.id}
-                                />                 
-                            ))
+                            markers.map(marker => {
+                                let status = ""
+                                let event = null
+                                if(event = active_events.find(event => event.event_id === marker.id)){
+                                    status = "active"
+                                }
+                                else if(event = completed_events.find(event => event.event_id === marker.id)){
+                                    status = "completed"
+                                }
+                                return(
+                                    <MyMarker 
+                                        key={marker.id}
+                                        latitude={marker.lat}
+                                        longitude={marker.long}
+                                        location_name={marker.location_name}
+                                        id={marker.id}
+                                        status={status}
+                                        event={event ? event : null}
+                                        username={props.current_user}
+                                    />)               
+                            })
                     : <></>
                 }
                     <GeolocateControl 
