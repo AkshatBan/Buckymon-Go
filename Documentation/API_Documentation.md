@@ -11,7 +11,7 @@ The base Url for that the backend will post to and the frontend will fetch from 
 
 (Note: this is subject to change)
 
-## Currently Supported Requests (as of 3/18/24)  
+## Currently Supported Requests (as of 4/23/24)  
 
 ### GET /Get_List_Of_Locations
 
@@ -143,7 +143,7 @@ The backend will return a list of events that the user has **NOT** completed yet
     long: -89.408,
     location_name: 'Union South',
     event_score: 3,
-    event_id: "Name of Event"
+    event_name: "Name of Event"
     event_description: 'sample event description'
 }
 ```
@@ -169,7 +169,7 @@ The backend will return a list of events that the user has **ALREADY** completed
     long: -89.408,
     location_name: 'Union South',
     event_score: 3,
-    event_id: "Name of Event"
+    event_name: "Name of Event"
     event_description: 'sample event description'
 }
 ```
