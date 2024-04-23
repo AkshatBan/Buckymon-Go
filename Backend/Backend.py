@@ -52,14 +52,17 @@ def Get_List_Of_Locations():
         dictionary['location_name'] = dictionary.pop("l_name")
 
         #Adds an event description 
-        # Selects all Locations
-        query = 'SELECT e_desc FROM Events WHERE l_id = ' + str(dictionary['id'])
+        query = 'SELECT e_desc, e_id FROM Events WHERE l_id = ' + str(dictionary['id'])
         cursor.execute(query) 
-        description = cursor.fetchone()
+        descriptionAndId = cursor.fetchone()
                 
         #Only adds it if it exists
-        if(description != None):
-            dictionary['event_desc'] = description['e_desc']    
+        if(descriptionAndId != None):
+            dictionary['event_desc'] = descriptionAndId['e_desc']   
+            dictionary['event_id'] = descriptionAndId['e_id'] 
+
+        #Adds event id
+
             
     #Closes cursor and connection at the end
     cursor.close()
@@ -219,12 +222,12 @@ def Active_Events():
         dictionary['long'] = round(float(locationData['l_long']))
         dictionary['location_name'] = locationData['l_name']
 
-        #Switches name of Event score, and Event Description
+        #Switches name of Event score, Event Name, and Event Description
         dictionary['event_score'] = dictionary.pop('e_score')
+        dictionary['event_name'] = dictionary.pop('e_name')
         dictionary['event_description'] = dictionary.pop('e_desc')
 
-        #Gets rid of event name, location id
-        dictionary.pop('e_name')
+        #Gets rid of location id
         dictionary.pop('l_id')
 
     #Closes cursor and connection
@@ -300,12 +303,12 @@ def Get_Completed_Events():
         dictionary['long'] = round(float(locationData['l_long']))
         dictionary['location_name'] = locationData['l_name']
 
-        #Switches name of Event score, and Event Description
+        #Switches name of Event score, Event Name, and Event Description
         dictionary['event_score'] = dictionary.pop('e_score')
+        dictionary['event_name'] = dictionary.pop('e_name')
         dictionary['event_description'] = dictionary.pop('e_desc')
 
-        #Gets rid of event name, location id
-        dictionary.pop('e_name')
+        #Gets rid of location id
         dictionary.pop('l_id')
 
     #Closes cursor and connection
