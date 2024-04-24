@@ -44,10 +44,16 @@ build-backend:
 
 build-database:
   stage: build
+  image: docker:20.10.17
+  services:
+    - docker:20.10.17-dind
+  tags:
+    - dind
+    - csl
+    - docker
   script:
     - echo "Building the database..."
-    - docker pull $DOCKER_REGISTRY/$DATABASE_IMAGE_NAME:$DOCKER_IMAGE_TAG
-    - docker run $DOCKER_REGISTRY/$DATABASE_IMAGE_NAME:$DOCKER_IMAGE_TAG sh -c 'mysql -u bansal25 -p ShXoPIL7d*% < db_setup.sql'
+    - docker build -f database.dockerfile -t database:cicd-build .
     # Add commands to build your application here
 
 # Define job for testing the application
