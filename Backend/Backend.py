@@ -177,9 +177,7 @@ def Active_Events():
     cursor.execute(query)
     eventDict = cursor.fetchall()     
     
-    #If the user has completed no events, then return code 400. eventdict will be False if it's empty
-    if bool(eventDict) == False:
-        return 400
+    
     
     #Stores all completed Events in tuple for our query to database
     completedEventsIDs = []
@@ -196,6 +194,10 @@ def Active_Events():
     query = 'SELECT * FROM Events WHERE e_id NOT IN ' + strRep
     cursor.execute(query)
     uncompletedEvents = cursor.fetchall()
+
+    #If the user has completed all events, then this should be empty, so we return 400
+    if bool(uncompletedEvents) == False:
+        return 400
         
     #Now builds final eventDict while also getting data from Locations table
 
