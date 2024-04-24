@@ -1,7 +1,7 @@
 import unittest
 from flask import url_for
 from unittest.mock import MagicMock, patch
-from Frontend_To_Backend_Data_Passage import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations
+from Backend.py import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations
 import json
 
 # Uses python's unittest mocking library to mock requests to the client
