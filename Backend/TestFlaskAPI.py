@@ -1,12 +1,10 @@
 import unittest
 from flask import url_for
 from unittest.mock import MagicMock, patch
-from Frontend_To_Backend_Data_Passage import app, Complete_Event, Get_User_Achievements, Active_Events
+from Frontend_To_Backend_Data_Passage import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations
 import json
 
 # Uses python's unittest mocking library to mock requests to the client
-# In the future, may need to implement mocking of the sql db using other 
-# libraries. 
 class TestFlaskAPI(unittest.TestCase):
 
     # Sets up the testing enviroment by creating a test client
@@ -14,19 +12,61 @@ class TestFlaskAPI(unittest.TestCase):
         app.testing = True
         self.client = app.test_client()
 
-    # @patch('app.request') # replaces app.request json with a mock object
-    # def test_get_data_from_frontend(self, mock_request):
-    #     # replaces the request.json with a json containing
-    #     # singlular empty key-value pair
-    #     mock_request.json = MagicMock(return_value={"key": "value"})
+    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock    
+    def test_get_list_of_locations(self, mock_connect):
+        # setting up mock cursor with proper fetchone and fetchall results
+        mock_cursor = MagicMock()
+        mock_cursor.execute = MagicMock()
+        fetchallResult = [
+            {
+                "l_id": 1,
+                "l_lat": 10,
+                "l_long": 20,
+                "l_name": "My house"
+            },
+            {
+                "l_id": 2,
+                "l_lat": 11.002,
+                "l_long": 8.345,
+                "l_name": "Their house"
+            }
+        ]
+        mock_cursor.fetchall = MagicMock(return_value=fetchallResult)
+        fetchoneResults = [
+            {
+                "e_desc": "House party"
+            },
+            {
+                "e_desc": "Lamer house party"
+            }
+        ]
+        mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
+        mock_cursor.close = MagicMock()
         
-    #     # gets the response by calling the test client
-    #     # note: this response is not a mock
-    #     response = self.client.get('/api/Get_Data_From_Frontend')
+        mock_connect.return_value = MagicMock()
+        mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
+        mock_connect.return_value.close = MagicMock
         
-    #     # asserts that the response was successful
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(response.json, {"message": "Data received successfully"})
+        # gets the response by calling the method
+        response = Get_List_Of_Locations()
+        
+        expected = [
+            {
+                "id": 1,
+                "lat": 10,
+                "long": 20,
+                "location_name": "My house",
+                "event_desc": "House party"
+            },
+            {
+                "id": 2,
+                "lat": 11,
+                "long": 8,
+                "location_name": "Their house",
+                "event_desc": "Lamer house party"
+            }
+        ]
+        self.assertEqual(response, json.dumps(expected))
 
     # @patch('app.location_data') # replaces the location data with a mock obj
     # def test_post_data_to_frontend(self, mock_location_data):
