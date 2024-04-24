@@ -9,9 +9,9 @@ app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 #Global variables for the connection
-host = '127.0.0.1'
+host = '172.17.0.2'
 user = 'root'
-password = 'Jonah2004*'
+password = 'databasemysql'
 database = 'Buckymon_Go_DB'
 cursorclass = pymysql.cursors.DictCursor
 
