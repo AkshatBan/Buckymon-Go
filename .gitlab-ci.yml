@@ -39,7 +39,7 @@ build-backend:
   script:
     - echo "Building the backend..."
     - docker build -f backend.dockerfile -t backend:cicd-build .
-    - docker run backend:cicd-build sh -c "python3 Frontend_To_Backend_Data_Passage.py"
+    - docker run backend:cicd-build sh -c "python3 Backend.py"
     # Add commands to build your application here
 
 build-database:
