@@ -9,9 +9,9 @@ app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 #Global variables for the connection
-host = '172.17.0.2'
+host = '127.0.0.1'
 user = 'root'
-password = 'databasemysql'
+password = 'Jonah2004*'
 database = 'Buckymon_Go_DB'
 cursorclass = pymysql.cursors.DictCursor
 
@@ -177,9 +177,7 @@ def Active_Events():
     cursor.execute(query)
     eventDict = cursor.fetchall()     
     
-    #If the user has completed no events, then return code 400. eventdict will be False if it's empty
-    if bool(eventDict) == False:
-        return 400
+    
     
     #Stores all completed Events in tuple for our query to database
     completedEventsIDs = []
@@ -196,6 +194,10 @@ def Active_Events():
     query = 'SELECT * FROM Events WHERE e_id NOT IN ' + strRep
     cursor.execute(query)
     uncompletedEvents = cursor.fetchall()
+
+    #If the user has completed all events, then this should be empty, so we return 400
+    if bool(uncompletedEvents) == False:
+        return 400
         
     #Now builds final eventDict while also getting data from Locations table
 
