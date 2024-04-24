@@ -6,9 +6,9 @@ ENV MYSQL_ROOT_PASSWORD=databasemysql
 
 
 # Copy the DB setup and test scripts into the container
-COPY db_setup.sql /docker-entrypoint-initdb.d/
-COPY db_test.sql .
-COPY clean_db.sql .
+COPY Database/db_setup.sql /docker-entrypoint-initdb.d/
+COPY Database/db_test.sql .
+COPY Database/clean_db.sql .
 
 # Expose port
 EXPOSE 3306
