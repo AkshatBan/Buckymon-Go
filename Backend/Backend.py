@@ -8,33 +8,22 @@ import json
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
-# Sample location data (will change later)
-location_data = [
-            {
-                'id': 1,
-                'long': -89.408,
-                'lat': 43.0719,
-                'location_name': 'Union South',
-                'event_desc': 'description'
-            },
-            {
-                'id': 2,
-                'long': -89.4040,
-                'lat': 43.0757,
-                'location_name': 'Bascom Hall',
-                'event_desc': 'something'
-            }
-]
+#Global variables for the connection
+host = '172.17.0.2'
+user = 'root'
+password = 'databasemysql'
+database = 'Buckymon_Go_DB'
+cursorclass = pymysql.cursors.DictCursor
 
 # Returns list of all location data 
 @app.route('/api/Get_List_Of_Locations', methods=['GET'])
 def Get_List_Of_Locations():
     # Connect to the database
-    connection = pymysql.connect(host='127.0.0.1',
-                                user='root',
-                                password='Jonah2004*',
-                                database='Buckymon_Go_DB',
-                                cursorclass=pymysql.cursors.DictCursor)
+    connection = pymysql.connect(host= host,
+                                user=user,
+                                password=password,
+                                database=database,
+                                cursorclass=cursorclass)
 
     cursor = connection.cursor()
     # Selects all Locations
@@ -96,11 +85,11 @@ def Complete_Event():
     updatedScore = 0
 
     # Connect to the database just to access event and get its score value and then get userScore
-    connection = pymysql.connect(host='127.0.0.1',
-                                user='root',
-                                password='Jonah2004*',
-                                database='Buckymon_Go_DB',
-                                cursorclass=pymysql.cursors.DictCursor)
+    connection = pymysql.connect(host= host,
+                                user=user,
+                                password=password,
+                                database=database,
+                                cursorclass=cursorclass)
     
     cursor = connection.cursor()
 
@@ -169,11 +158,11 @@ def Active_Events():
     userId = 0
     eventDict = {}
     # Connect to the database just to access event and get its score value and then get userScore
-    connection = pymysql.connect(host='127.0.0.1',
-                                user='root',
-                                password='Jonah2004*',
-                                database='Buckymon_Go_DB',
-                                cursorclass=pymysql.cursors.DictCursor)
+    connection = pymysql.connect(host= host,
+                                user=user,
+                                password=password,
+                                database=database,
+                                cursorclass=cursorclass)
     
     cursor = connection.cursor()
 
@@ -252,11 +241,11 @@ def Get_Completed_Events():
     userId = 0
     eventDict = {}
     # Connect to the database just to access event and get its score value and then get userScore
-    connection = pymysql.connect(host='127.0.0.1',
-                                user='root',
-                                password='Jonah2004*',
-                                database='Buckymon_Go_DB',
-                                cursorclass=pymysql.cursors.DictCursor)
+    connection = pymysql.connect(host= host,
+                                user=user,
+                                password=password,
+                                database=database,
+                                cursorclass=cursorclass)
     
     cursor = connection.cursor()
 
@@ -333,11 +322,11 @@ def Log_User():
         return json.dumps({'message': 'No username provided'}), 400
     
     # Establishes connection to database to conduct the necessary queries
-    connection = pymysql.connect(host='127.0.0.1',
-                                user='root',
-                                password='Jonah2004*',
-                                database='Buckymon_Go_DB',
-                                cursorclass=pymysql.cursors.DictCursor)
+    connection = pymysql.connect(host= host,
+                                user=user,
+                                password=password,
+                                database=database,
+                                cursorclass=cursorclass)
     with connection:
         with connection.cursor() as cursor:
             query = 'SELECT * FROM User WHERE u_name = ' + '\'' + username + '\''
@@ -375,11 +364,11 @@ def Get_User_Achievements():
     # Establishes a table that contain user's completed achievement(s) to reference
     completedAchievements = []
     # Connect to database to read the data
-    connection = pymysql.connect(host='127.0.0.1',
-                                user='root',
-                                password='Jonah2004*',
-                                database='Buckymon_Go_DB',
-                                cursorclass=pymysql.cursors.DictCursor)
+    connection = pymysql.connect(host=host,
+                                user=user,
+                                password=password,
+                                database=database,
+                                cursorclass=cursorclass)
     # Obtains user score and user ID
     with connection:
         with connection.cursor() as cursor:
@@ -442,11 +431,11 @@ def Get_Uncompleted_Achievements():
     uncompletedAchievements = []
 
     # Connects to the database.
-    connection = pymysql.connect(host='127.0.0.1',
-                                user='root',
-                                password='Jonah2004*',
-                                database='Buckymon_Go_DB',
-                                cursorclass=pymysql.cursors.DictCursor)
+    connection = pymysql.connect(host= host,
+                                user=user,
+                                password=password,
+                                database=database,
+                                cursorclass=cursorclass)
 
     # Makes the necessary queries to extract information.
     with connection:
