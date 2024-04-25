@@ -11,35 +11,48 @@ variables:
   DOCKER_IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
   DOCKER_TLS_CERTDIR: "/certs"
 
+
+
 # Define job for building the application
 build-frontend:
   stage: build
   image: docker:20.10.17
   services:
-    - docker:20.10.17-dind
+    - name: docker:20.10.17-dind
+      alias: docker
+    # - docker:20.10.17-dind
   tags:
     - dind
     - csl
     - docker
   script:
     - echo "Building the frontend..."
-    - docker build -f frontend.dockerfile -t frontend:cicd-build .
-    - docker run frontend:cicd-build sh -c "npm run"
+    - docker build -f frontend.dockerfile -t $DOCKER_REGISTRY/frontend:frontend_cicd .
+    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+    - docker push $DOCKER_REGISTRY/frontend:frontend_cicd
+    - docker run $DOCKER_REGISTRY/frontend:frontend_cicd sh -c "npm run"
     # Add commands to build your application here
 
 build-backend:
   stage: build
   image: docker:20.10.17
   services:
-    - docker:20.10.17-dind
+    - name: docker:20.10.17-dind
+      alias: docker
+    # - docker:20.10.17-dind
   tags:
     - dind
     - csl
     - docker
   script:
+    # - echo "Building the backend..."
+    # - docker build -f backend.dockerfile -t backend:cicd-build .
+
     - echo "Building the backend..."
-    - docker build -f backend.dockerfile -t backend:cicd-build .
-    - docker run backend:cicd-build sh -c "python3 Backend.py"
+    - docker build -f backend.dockerfile -t $DOCKER_REGISTRY/backend:backend_cicd .
+    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+    - docker push $DOCKER_REGISTRY/backend:backend_cicd
+    # - docker run backend:cicd-build sh -c "python3 Backend.py"
     # Add commands to build your application here
 
 build-database:
@@ -52,8 +65,12 @@ build-database:
     - csl
     - docker
   script:
+    # - echo "Building the database..."
+    # - docker build -f database.dockerfile -t database:cicd-build .
     - echo "Building the database..."
-    - docker build -f database.dockerfile -t database:cicd-build .
+    - docker build -f database.dockerfile -t $DOCKER_REGISTRY/database_docker_img:database_cicd .
+    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+    - docker push $DOCKER_REGISTRY/database_docker_img:database_cicd
     # Add commands to build your application here
 
 # Define job for testing the application
@@ -65,10 +82,21 @@ test:
 
 test_frontend:
   stage: test
+  image: docker:20.10.17
+  services:
+    - docker:20.10.17-dind
+  tags:
+    - dind
+    - csl
+    - docker
   script:
    - echo "Testing frontend..."
-   - docker pull frontend:cicd-build
-   - docker run frontend:cicd-build sh -c "npm test"
+  #  - docker pull frontend:cicd-build
+  #  - docker build -f frontend.dockerfile -t frontend:cicd-build .
+   - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+
+   - docker pull $DOCKER_REGISTRY/frontend:frontend_cicd
+   - docker run $DOCKER_REGISTRY/frontend:frontend_cicd sh -c "npm test"
 
 # Define job for deploying the application
 deploy:
