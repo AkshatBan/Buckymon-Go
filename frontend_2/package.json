@@ -12,6 +12,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.7",
+    "react-modal": "^3.16.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -39,5 +40,7 @@
       "last 1 safari version"
     ]
   },
-  "setupFilesAfterEnv": ["<rootDir>/src/setupTests.js"]
+  "setupFilesAfterEnv": [
+    "<rootDir>/src/setupTests.js"
+  ]
 }

@@ -1,13 +1,43 @@
 import * as React from 'react';
 import Map, {GeolocateControl} from 'react-map-gl';
 import MyMarker from './MyMarker'
+import Modal from 'react-modal'
 
 function MyMap(props){
 
-    // const [selected_Marker, Set_Selected_Marker] = React.useState(null);
-    // const [markers, Set_Markers] = React.useState();
-    // const [completed_events, Set_Completed_Events] = React.useState([]);
-    // const [active_events, Set_Active_Events] = React.useState([]);
+    const [selected_Marker, Set_Selected_Marker] = React.useState(null);
+    const [markers, Set_Markers] = React.useState();
+    const [completed_events, Set_Completed_Events] = React.useState([]);
+    const [active_events, Set_Active_Events] = React.useState([]);
+    const [achievements, Set_Achievements] = React.useState([]);
+
+    const [modal_open, Set_Modal_Open] = React.useState(false);
+
+    // const styles = {
+    //     modal_styles: {
+    //         overlay: {
+    //             position: 'absolute',
+    //             top: '40%',
+    //             left: '50%',
+    //             transform: 'translate(-50%, -40%)',
+    //             backgroundColor: 'lightblue',
+    //             borderRadius: '16px',
+    //             overflowY: 'auto'
+    //         },
+    //         content: {
+    //             justifyContent: "center",
+    //             alignItems: "center",
+    //             borderRadius: '16px',
+    //         }
+    //     },
+    //     list_styles: {
+    //         border: '1px solid black', 
+    //         padding: '4px', 
+    //         borderRadius: '8px', 
+    //         margin: '8px',
+    //         backgroundColor: 'lightgray'
+    //     }
+    // }
 
     // const markers =
     // [
@@ -198,27 +228,24 @@ function MyMap(props){
     //         long: -89.4076,
     //         location_name: "Union South",
     //         event_score: 3,
-    //         event_description: 'Go Bowling at the Union South bowling alley.'   
+    //         event_description: 'Go Bowling at the Union South bowling alley.',
+    //         event_name: 'Ten Pins!'   
     //     }
     // ]
 
 
     //fetch location data on component load
-       
-    React.useEffect(() => {
-        fetch("http://127.0.0.1:5000/api/Get_List_Of_Locations", {
+
+    const Fetch_Locations = async () =>{
+        const res = await fetch("http://127.0.0.1:5000/api/Get_List_Of_Locations", {
             method: "GET"
         })
-        .then(res => {
-            return res.json()
-        })
-        .then(data => {
-            Set_Markers(data);
-        })
-    }, [])
+        const data = await res.json()
+        Set_Markers(data)
+    }
 
-    React.useEffect(() => {
-        fetch("http://127.0.0.1:5000/api/Active_Events", {
+    const Fetch_CompletedEvents = async () =>{
+        const res = await fetch("http://127.0.0.1:5000/api/Get_Completed_Events", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -227,21 +254,19 @@ function MyMap(props){
                 username: props.current_user
             })
         })
-        .then(res => {
-            if(res.status === 200){
-                return res.json()
-            }
-            else if(res.status === 400){
-                return []
-            }
-        })
-        .then(data => {
-            Set_Active_Events(data);
-        })
-    }, [])
+        let data = []
+        if(res.status === 200){
+            data = await res.json()
+        }
+        else{
+            data = []
+        }
+        Set_Completed_Events(data);
 
-    React.useEffect(() => {
-        fetch("http://127.0.0.1:5000/api/Get_Completed_Events", {
+    }
+
+    const Fetch_Active_Events = async () =>{
+        const res = await fetch("http://127.0.0.1:5000/api/Active_Events", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -250,18 +275,127 @@ function MyMap(props){
                 username: props.current_user
             })
         })
-        .then(res => {
-            if(res.status === 200){
-                return res.json()
-            }
-            else if(res.status === 400){
-                return []
-            }
+        let data = []
+        if(res.status === 200){
+            data = await res.json()
+        }
+        else{
+            data = []
+        }
+        Set_Active_Events(data);
+
+    }
+
+    const Fetch_Achievements = async () =>{
+        const res = await fetch("http://127.0.0.1:5000/api/Get_User_Achievements", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: props.current_user
+            })
         })
-        .then(data => {
-            Set_Completed_Events(data);
-        })
+        let data = []
+        if(res.status === 200){
+            data = await res.json()
+        }
+        else{
+            data = []
+        }
+        Set_Achievements(data);
+
+    }
+
+    const Refresh_Data = async () => {
+        Fetch_Locations()
+        Fetch_CompletedEvents()
+        Fetch_Active_Events()
+        Fetch_Achievements()
+    }
+       
+
+    React.useEffect(() =>{
+        Refresh_Data()
     }, [])
+
+    // React.useEffect(() => {
+    //     fetch("http://127.0.0.1:5000/api/Get_List_Of_Locations", {
+    //         method: "GET"
+    //     })
+    //     .then(res => {
+    //         return res.json()
+    //     })
+    //     .then(data => {
+    //         Set_Markers(data);
+    //     })
+    // }, [])
+
+    // React.useEffect(() => {
+    //     fetch("http://127.0.0.1:5000/api/Active_Events", {
+    //         method: "GET",
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify({
+    //             username: props.current_user
+    //         })
+    //     })
+    //     .then(res => {
+    //         if(res.status === 200){
+    //             return res.json()
+    //         }
+    //         else if(res.status === 400){
+    //             return []
+    //         }
+    //     })
+    //     .then(data => {
+    //         Set_Active_Events(data);
+    //     })
+    // }, [])
+
+    // React.useEffect(() => {
+    //     fetch("http://127.0.0.1:5000/api/Get_Completed_Events", {
+    //         method: "GET",
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify({
+    //             username: props.current_user
+    //         })
+    //     })
+    //     .then(res => {
+    //         if(res.status === 200){
+    //             return res.json()
+    //         }
+    //         else if(res.status === 400){
+    //             return []
+    //         }
+    //     })
+    //     .then(data => {
+    //         Set_Completed_Events(data);
+    //     })
+    // }, [])
+
+    // const achievements = {
+    //     username: 'user123',
+    //     user_score: 1,
+    //     completed_achievements:[
+    //         {
+    //             achievement_id: 1,
+    //             achievement_name: 'example achievement1',
+    //             achievement_score: 3,
+    //             achievement_description: 'example description1'
+    //         },
+    //         {
+    //             achievement_id: 2,
+    //             achievement_name: 'example achievement2',
+    //             achievement_score: 4,
+    //             achievement_description: 'example description2'
+    //         }
+    //     ]
+    // }
+    
 
 
         return(
@@ -310,7 +444,57 @@ function MyMap(props){
                         showUserLocation = {true}
                     />
                 </Map>
+                <Modal
+                    isOpen={modal_open}
+                    style={styles.modal_styles}>
+                        <div>
+                            <h1 style={{textAlign: 'center'}}>{`User Stats for ${props.current_user}`}</h1>
+                            <h3>Current Score: {achievements ? achievements.user_score : 0}</h3>
+                            {
+                                achievements.completed_achievements ?
+                                <div style={styles.list_styles}>
+                                    <h3>You Have Completed the Following Achievements</h3>
+                                    <ul>
+                                    {
+                                        achievements.completed_achievements.map(a => 
+                                            <li>
+                                                <h5>{a.achievement_name}</h5>
+                                                <pre>   {a.achievement_description}</pre>
+                                                <pre>   Score: {a.achievement_score}</pre>
+                                            </li>
+                                        )
+                                    }
+                                    </ul>
+                                </div> 
+                                : <h3>No achievements completed yet! Go out and complete your first!</h3>
+
+                            }
+                            {
+                                completed_events ? 
+                                <div style={styles.list_styles}>
+                                    <h3>You have completed the following events</h3>
+                                    <ul>
+                                        {
+                                            completed_events.map(e =>
+                                                <li>
+                                                    <h5>{e.event_name}</h5>
+                                                    <pre>   {e.event_description}</pre>
+                                                    <pre>   Score: {e.event_score}</pre>
+                                                    <pre>   Location: {e.location_name}</pre>
+                                                </li>
+                                            )
+                                        }
+                                    </ul>
+                                </div>
+                                : <h3>No events completed yet! Go out and complete your first!</h3>
+                            }
+                            <div style={{textAlign:'center', paddingTop: '16px'}}>
+                                <button style={{backgroundColor: 'red', borderRadius: '8px'}} onClick={() => Set_Modal_Open(false)}>Close</button>
+                            </div>
+                        </div>
+                </Modal>
                 <button onClick={() => {props.Set_Logged_In(false)}}>Log Out</button>
+                <button onClick={() => Set_Modal_Open(true)}>Show Stats</button>
             </div>
         );
 }
