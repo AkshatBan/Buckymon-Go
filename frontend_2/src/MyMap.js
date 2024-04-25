@@ -13,31 +13,31 @@ function MyMap(props){
 
     const [modal_open, Set_Modal_Open] = React.useState(false);
 
-    // const styles = {
-    //     modal_styles: {
-    //         overlay: {
-    //             position: 'absolute',
-    //             top: '40%',
-    //             left: '50%',
-    //             transform: 'translate(-50%, -40%)',
-    //             backgroundColor: 'lightblue',
-    //             borderRadius: '16px',
-    //             overflowY: 'auto'
-    //         },
-    //         content: {
-    //             justifyContent: "center",
-    //             alignItems: "center",
-    //             borderRadius: '16px',
-    //         }
-    //     },
-    //     list_styles: {
-    //         border: '1px solid black', 
-    //         padding: '4px', 
-    //         borderRadius: '8px', 
-    //         margin: '8px',
-    //         backgroundColor: 'lightgray'
-    //     }
-    // }
+    const styles = {
+        modal_styles: {
+            overlay: {
+                position: 'absolute',
+                top: '40%',
+                left: '50%',
+                transform: 'translate(-50%, -40%)',
+                backgroundColor: 'lightblue',
+                borderRadius: '16px',
+                overflowY: 'auto'
+            },
+            content: {
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: '16px',
+            }
+        },
+        list_styles: {
+            border: '1px solid black', 
+            padding: '4px', 
+            borderRadius: '8px', 
+            margin: '8px',
+            backgroundColor: 'lightgray'
+        }
+    }
 
     // const markers =
     // [
