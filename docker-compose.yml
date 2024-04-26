@@ -1,17 +1,17 @@
-version: ‘3.8’
+version: '3.8'
 services:
   frontend:
-    image: frontend:latest
+    image: registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go/frontend:latest
     ports:
-      - “3000:3000”
+      - "3000:3000"
     depends_on:
       - backend
     environment:
       - REACT_APP_BACKEND_URL=http://backend:5000  # URL of the Flask backend service
   backend:
-    image: backend:latest
+    image: registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go/backend:latest
     ports:
-      - “5000:5000"
+      - "5000:5000"
     depends_on:
       - mysql
     environment:
@@ -20,9 +20,16 @@ services:
       - MYSQL_PASSWORD=databasemysql
       - MYSQL_DB=Buckymon_Go_DB
   mysql:
-    image: database_docker_img:latest
+    image: registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go/database_docker_img:latest
     ports:
-      - “3306:3306”
+      - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=databasemysql
       - MYSQL_DATABASE=Buckymon_Go_DB
+#     volumes:
+#       - mysql_data:/var/lib/mysql
+
+# volumes:
+#   mysql_data:
+
+# ^ Above code to be uncommented before final deployment
