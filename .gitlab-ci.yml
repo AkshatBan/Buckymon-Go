@@ -1,37 +1,27 @@
-# Defines stages that will be executed in the pipeline
 stages:
   - build
   - test
-  - deploy
 
-# Define variables that will be used in the pipeline
 variables:
-  DATABASE_IMAGE_NAME: "database_docker_img"
   DOCKER_REGISTRY: "registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go"
-  DOCKER_IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
-  DOCKER_TLS_CERTDIR: "/certs"
 
-
-
-# Define job for building the application
+# Builds containers with code additions and pushes them to container registry
 build-frontend:
   stage: build
   image: docker:20.10.17
   services:
     - name: docker:20.10.17-dind
       alias: docker
-    # - docker:20.10.17-dind
   tags:
     - dind
     - csl
     - docker
   script:
     - echo "Building the frontend..."
-    - docker build -f frontend.dockerfile -t $DOCKER_REGISTRY/frontend:frontend_cicd .
+    - docker build -f frontend.dockerfile -t $DOCKER_REGISTRY/frontend:latest .
     - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
-    - docker push $DOCKER_REGISTRY/frontend:frontend_cicd
-    - docker run $DOCKER_REGISTRY/frontend:frontend_cicd sh -c "npm run"
-    # Add commands to build your application here
+    - docker push $DOCKER_REGISTRY/frontend:latest
+    - docker run $DOCKER_REGISTRY/frontend:latest sh -c "npm run"
 
 build-backend:
   stage: build
@@ -39,47 +29,34 @@ build-backend:
   services:
     - name: docker:20.10.17-dind
       alias: docker
-    # - docker:20.10.17-dind
   tags:
     - dind
     - csl
     - docker
   script:
-    # - echo "Building the backend..."
-    # - docker build -f backend.dockerfile -t backend:cicd-build .
-
     - echo "Building the backend..."
-    - docker build -f backend.dockerfile -t $DOCKER_REGISTRY/backend:backend_cicd .
+    - docker build -f backend.dockerfile -t $DOCKER_REGISTRY/backend:latest .
     - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
-    - docker push $DOCKER_REGISTRY/backend:backend_cicd
+    - docker push $DOCKER_REGISTRY/backend:latest
     # - docker run backend:cicd-build sh -c "python3 Backend.py"
-    # Add commands to build your application here
 
 build-database:
   stage: build
   image: docker:20.10.17
   services:
-    - docker:20.10.17-dind
+    - name: docker:20.10.17-dind
+      alias: docker
   tags:
     - dind
     - csl
     - docker
   script:
-    # - echo "Building the database..."
-    # - docker build -f database.dockerfile -t database:cicd-build .
     - echo "Building the database..."
-    - docker build -f database.dockerfile -t $DOCKER_REGISTRY/database_docker_img:database_cicd .
+    - docker build -f database.dockerfile -t $DOCKER_REGISTRY/database_docker_img:latest .
     - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
-    - docker push $DOCKER_REGISTRY/database_docker_img:database_cicd
-    # Add commands to build your application here
+    - docker push $DOCKER_REGISTRY/database_docker_img:latest
 
-# Define job for testing the application
-test:
-  stage: test
-  script:
-    - echo "Running tests..."
-    # Add commands to run your tests here
-
+# Frontend and Backend Unit Testing
 test_frontend:
   stage: test
   image: docker:20.10.17
@@ -99,13 +76,13 @@ test_frontend:
    - docker run $DOCKER_REGISTRY/frontend:frontend_cicd sh -c "CI=true npm test"
 
 # Define job for deploying the application
-deploy:
-  stage: deploy
-  script:
-    - echo "Deploying application..."
-    # Add commands to deploy your application here
-  environment:
-    name: production
-    url: "https://yourapp.com"
-  only:
-    - main
+# deploy:
+#   stage: deploy
+#   script:
+#     - echo "Deploying application..."
+#     # Add commands to deploy your application here
+#   environment:
+#     name: production
+#     url: "https://yourapp.com"
+#   only:
+#     - main
