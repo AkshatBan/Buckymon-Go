@@ -1,23 +1,17 @@
-# Defines stages that will be executed in the pipeline
 stages:
   - build
   - test
 
-# Define variables that will be used in the pipeline
 variables:
   DOCKER_REGISTRY: "registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go"
-  DOCKER_TLS_CERTDIR: "/certs"
 
-
-
-# Define job for building the application
+# Builds containers with code additions and pushes them to container registry
 build-frontend:
   stage: build
   image: docker:20.10.17
   services:
     - name: docker:20.10.17-dind
       alias: docker
-    # - docker:20.10.17-dind
   tags:
     - dind
     - csl
@@ -35,7 +29,6 @@ build-backend:
   services:
     - name: docker:20.10.17-dind
       alias: docker
-    # - docker:20.10.17-dind
   tags:
     - dind
     - csl
@@ -51,7 +44,8 @@ build-database:
   stage: build
   image: docker:20.10.17
   services:
-    - docker:20.10.17-dind
+    - name: docker:20.10.17-dind
+      alias: docker
   tags:
     - dind
     - csl
@@ -62,30 +56,24 @@ build-database:
     - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
     - docker push $DOCKER_REGISTRY/database_docker_img:latest
 
-# Define job for testing the application
-# test:
-#   stage: test
-#   script:
-#     - echo "Running tests..."
-#     # Add commands to run your tests here
+# Frontend and Backend Unit Testing
+test_frontend:
+  stage: test
+  image: docker:20.10.17
+  services:
+    - docker:20.10.17-dind
+  tags:
+    - dind
+    - csl
+    - docker
+  script:
+   - echo "Testing frontend..."
+  #  - docker pull frontend:cicd-build
+  #  - docker build -f frontend.dockerfile -t frontend:cicd-build .
+   - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
 
-# test_frontend:
-#   stage: test
-#   image: docker:20.10.17
-#   services:
-#     - docker:20.10.17-dind
-#   tags:
-#     - dind
-#     - csl
-#     - docker
-#   script:
-#    - echo "Testing frontend..."
-#   #  - docker pull frontend:cicd-build
-#   #  - docker build -f frontend.dockerfile -t frontend:cicd-build .
-#    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
-
-#    - docker pull $DOCKER_REGISTRY/frontend:frontend_cicd
-#    - docker run $DOCKER_REGISTRY/frontend:frontend_cicd sh -c "CI=true npm test"
+   - docker pull $DOCKER_REGISTRY/frontend:frontend_cicd
+   - docker run $DOCKER_REGISTRY/frontend:frontend_cicd sh -c "CI=true npm test"
 
 # Define job for deploying the application
 # deploy:
