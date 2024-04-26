@@ -96,7 +96,7 @@ test_frontend:
    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
 
    - docker pull $DOCKER_REGISTRY/frontend:frontend_cicd
-   - docker run $DOCKER_REGISTRY/frontend:frontend_cicd sh -c "npm test"
+   - docker run $DOCKER_REGISTRY/frontend:frontend_cicd sh -c "CI=true npm test"
 
 # Define job for deploying the application
 deploy:
