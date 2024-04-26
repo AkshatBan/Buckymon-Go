@@ -145,7 +145,7 @@ def Complete_Event():
 #This method takes in a username and returns all the Events that the user has not yet completed
 @app.route('/api/Active_Events', methods = ['GET'])
 def Active_Events():
-    userInfo = request.json
+    # userInfo = request.json
 
     #For testing purposes
     '''
@@ -154,7 +154,7 @@ def Active_Events():
                 }
     '''
 
-    userName = userInfo['username']
+    userName = request.args.get("username")
     userId = 0
     eventDict = {}
     # Connect to the database just to access event and get its score value and then get userScore
@@ -230,7 +230,7 @@ def Active_Events():
 #This method takes in a username and returns all the Events that the user has not yet completed
 @app.route('/api/Get_Completed_Events', methods = ['GET'])
 def Get_Completed_Events():
-    userInfo = request.json
+    # userInfo = request.json
     
     #For testing purposes
     '''
@@ -239,7 +239,7 @@ def Get_Completed_Events():
                 }
     '''
 
-    userName = userInfo['username']
+    userName = request.args.get("username")
     userId = 0
     eventDict = {}
     # Connect to the database just to access event and get its score value and then get userScore
@@ -357,14 +357,14 @@ def Log_User():
 @app.route('/api/Get_User_Achievements', methods=['GET'])
 def Get_User_Achievements():
     # Acquires username upon GET request
-    userInfo = request.json
+    # userInfo = request.json
     '''
     userInfo = {
                 'username': 'Aaron'
                }
     '''
 
-    userName = userInfo['username']
+    userName = request.args.get("username")
     userScore = 0
     # Establishes a table that contain user's completed achievement(s) to reference
     completedAchievements = []
@@ -428,13 +428,13 @@ def Get_User_Achievements():
 @app.route('/api/Get_Uncompleted_Achievements', methods=['GET'])
 def Get_Uncompleted_Achievements():
     # Gets the information needed to create the returned JSON body.
-    userInfo = request.json
+    # userInfo = request.json
     '''
     userInfo = {
                 'username': 'Aaron'
                }
     '''
-    username = userInfo['username']
+    username = request.args.get("username")
     # List of uncompleted achievements that will be updated unless user has completed all achievements
     uncompletedAchievements = []
 

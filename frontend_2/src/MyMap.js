@@ -245,14 +245,16 @@ function MyMap(props){
     }
 
     const Fetch_CompletedEvents = async () =>{
-        const res = await fetch("http://127.0.0.1:5000/api/Get_Completed_Events", {
+        let params = {"username": props.current_user}
+        let query = Object.keys(params)
+                          .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+                          .join('&')
+        let url = "http://127.0.0.1:5000/api/Get_Completed_Events?" + query
+        const res = await fetch(url, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username: props.current_user
-            })
+            }
         })
         let data = []
         if(res.status === 200){
@@ -266,14 +268,16 @@ function MyMap(props){
     }
 
     const Fetch_Active_Events = async () =>{
-        const res = await fetch("http://127.0.0.1:5000/api/Active_Events", {
+        let params = {"username": props.current_user}
+        let query = Object.keys(params)
+                          .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+                          .join('&')
+        let url = "http://127.0.0.1:5000/api/Active_Events?" + query
+        const res = await fetch(url, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username: props.current_user
-            })
+            }
         })
         let data = []
         if(res.status === 200){
@@ -287,14 +291,16 @@ function MyMap(props){
     }
 
     const Fetch_Achievements = async () =>{
-        const res = await fetch("http://127.0.0.1:5000/api/Get_User_Achievements", {
+        let params = {"username": props.current_user}
+        let query = Object.keys(params)
+                          .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+                          .join('&')
+        let url = "http://127.0.0.1:5000/api/Get_User_Achievements?" + query
+        const res = await fetch(url, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username: props.current_user
-            })
+            }
         })
         let data = []
         if(res.status === 200){
