@@ -1,7 +1,7 @@
 import unittest
 from flask import url_for
 from unittest.mock import MagicMock, patch
-from Backend.py import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations
+from Backend import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations, Get_Completed_Events
 import json
 
 # Uses python's unittest mocking library to mock requests to the client
@@ -288,6 +288,91 @@ class TestFlaskAPI(unittest.TestCase):
                 "completed_achievements": completedAchievements
             }
             self.assertEqual(response[0], json.dumps(expected))
+    
+    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock 
+    def test_get_completed_events(self, mock_connect):
+        with app.test_request_context(
+        "/api/Get_Completed_Events", method="GET", json={"username": "Aaron"}
+        ):
+            mock_cursor = MagicMock()
+            mock_cursor.execute = MagicMock()
+            fetchoneResults = [
+                {
+                    "u_id": 1
+                },
+                {
+                    "l_lat": 5,
+                    "l_long": 7,
+                    "l_name": "This Street"
+                },
+                {
+                    "l_lat": 10,
+                    "l_long": 1,
+                    "l_name": "Other Street"
+                }
+            ]
+            
+            fetchallResults = [
+                [
+                    {
+                        "completes_e_id": 1
+                    },
+                    {
+                        "completes_e_id": 2
+                    }
+                ],
+                [
+                    {
+                        "e_id": 1,
+                        "e_score": 10,
+                        "e_name": "Dog!",
+                        "e_desc": "Pet a dog",
+                        "l_id": 1
+                    },
+                    {
+                        "e_id": 2,
+                        "e_score": 20,
+                        "e_name": "Cat!",
+                        "e_desc": "Pet a cat",
+                        "l_id": 2
+                    }
+                ]
+            ]
+            
+            mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
+            mock_cursor.fetchall = MagicMock(side_effect=fetchallResults)
+            mock_cursor.close = MagicMock()
+            
+            mock_connect = MagicMock(return_value=MagicMock())
+            mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
+            mock_connect.return_value.close = MagicMock()
+            
+            response = Get_Completed_Events()
+            
+            expected = [
+                    {
+                        "event_id": 1,
+                        "event_score": 10,
+                        "event_name": "Dog!",
+                        "event_description": "Pet a dog",
+                        "lat": 5,
+                        "long": 7,
+                        "location_name": "This Street"
+                    },
+                    {
+                        "event_id": 2,
+                        "event_score": 20,
+                        "event_name": "Cat!",
+                        "event_description": "Pet a cat",
+                        "lat": 10,
+                        "long": 1,
+                        "location_name": "Other Street"
+                    }
+                ]
+            
+            
+            
+            self.assertEqual(response, json.dumps(expected))
 
 
 if __name__ == '__main__':
