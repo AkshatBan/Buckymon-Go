@@ -3,6 +3,7 @@ from flask import url_for
 from unittest.mock import MagicMock, patch
 from Backend import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations, Get_Completed_Events, Log_User
 import json
+from io import StringIO
 
 # Uses python's unittest mocking library to mock requests to the client
 class TestFlaskAPI(unittest.TestCase):
@@ -374,8 +375,9 @@ class TestFlaskAPI(unittest.TestCase):
             
             self.assertEqual(response, json.dumps(expected))
     
-    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock 
-    def test_log_user(self, mock_connect):
+    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock
+    @patch('sys.stdout', new_callable=StringIO) # mock print() method
+    def test_log_user(self, mock_connect, mock_stdout):
         with app.test_request_context(
         "/api/Log_User", method="POST", json={"username": "Aaron"}
         ):
@@ -404,6 +406,34 @@ class TestFlaskAPI(unittest.TestCase):
             
             self.assertEqual(response1[1], 200)
             self.assertEqual(response1[0], json.dumps(expected1))
+            self.assertEqual(mock_stdout.get_value(), 'Aaron not registered in system.\n')
+            
+            # Case 2: Username already exists and is registered
+            mock_cursor1 = MagicMock()
+            mock_cursor1.__enter__ = MagicMock()
+            mock_cursor1.__enter__.return_value = MagicMock()
+            mock_cursor1.__enter__.return_value.execute = MagicMock()
+            fetchoneRet = {
+                "attribute": "blah blah"
+            }
+            mock_cursor1.__enter__.return_value.fetchone = MagicMock(return_value=fetchoneRet)
+            
+            mock_connect = MagicMock()
+            mock_connect.return_value = MagicMock()
+            mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor1)
+            
+            response2 = Log_User()
+            
+            self.assertEqual(mock_stdout.get_value(), 'Aaron is in system.\n')
+            
+        # Case 3: username not provided in request
+        with app.test_request_context(
+        "/api/Log_User", method="POST", json={"username": None}
+        ):
+            response3 = Log_User()
+            
+            self.assertEqual(response3[1], 400)
+            self.assertEqual(response3[0], json.dumps({'message': 'No username provided'}))
 
 
 if __name__ == '__main__':
