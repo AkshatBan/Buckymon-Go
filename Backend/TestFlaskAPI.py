@@ -35,10 +35,12 @@ class TestFlaskAPI(unittest.TestCase):
         mock_cursor.fetchall = MagicMock(return_value=fetchallResult)
         fetchoneResults = [
             {
-                "e_desc": "House party"
+                "e_desc": "House party",
+                "e_id": 1
             },
             {
-                "e_desc": "Lamer house party"
+                "e_desc": "Lamer house party",
+                "e_id": 2
             }
         ]
         mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
@@ -57,14 +59,16 @@ class TestFlaskAPI(unittest.TestCase):
                 "lat": 10,
                 "long": 20,
                 "location_name": "My house",
-                "event_desc": "House party"
+                "event_desc": "House party",
+                "event_id": 1
             },
             {
                 "id": 2,
                 "lat": 11,
                 "long": 8,
                 "location_name": "Their house",
-                "event_desc": "Lamer house party"
+                "event_desc": "Lamer house party",
+                "event_id": 2
             }
         ]
         self.assertEqual(response, json.dumps(expected))
@@ -163,6 +167,7 @@ class TestFlaskAPI(unittest.TestCase):
                     "long": -89,
                     "location_name": "Union South",
                     "event_score": 10, 
+                    "event_name": "four",
                     "event_description": "the number after three"
                 },
                 {
@@ -171,6 +176,7 @@ class TestFlaskAPI(unittest.TestCase):
                     "long": -89,
                     "location_name": "Bascom Hall",
                     "event_score": 20, 
+                    "event_name": "five",
                     "event_description": "the number after four"
                 }
             ]
@@ -344,7 +350,7 @@ class TestFlaskAPI(unittest.TestCase):
             mock_cursor.fetchall = MagicMock(side_effect=fetchallResults)
             mock_cursor.close = MagicMock()
             
-            mock_connect = MagicMock(return_value=MagicMock())
+            mock_connect.return_value = MagicMock()
             mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
             mock_connect.return_value.close = MagicMock()
             
@@ -353,21 +359,21 @@ class TestFlaskAPI(unittest.TestCase):
             expected = [
                     {
                         "event_id": 1,
-                        "event_score": 10,
-                        "event_name": "Dog!",
-                        "event_description": "Pet a dog",
                         "lat": 5,
                         "long": 7,
-                        "location_name": "This Street"
+                        "location_name": "This Street",
+                        "event_score": 10,
+                        "event_name": "Dog!",
+                        "event_description": "Pet a dog"
                     },
                     {
                         "event_id": 2,
-                        "event_score": 20,
-                        "event_name": "Cat!",
-                        "event_description": "Pet a cat",
                         "lat": 10,
                         "long": 1,
-                        "location_name": "Other Street"
+                        "location_name": "Other Street",
+                        "event_score": 20,
+                        "event_name": "Cat!",
+                        "event_description": "Pet a cat"
                     }
                 ]
             
@@ -375,9 +381,9 @@ class TestFlaskAPI(unittest.TestCase):
             
             self.assertEqual(response, json.dumps(expected))
     
+    @patch('builtins.print') # mock print() method
     @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock
-    @patch('sys.stdout', new_callable=StringIO) # mock print() method
-    def test_log_user(self, mock_connect, mock_stdout):
+    def test_log_user(self, mock_connect, mock_print):
         with app.test_request_context(
         "/api/Log_User", method="POST", json={"username": "Aaron"}
         ):
@@ -393,7 +399,6 @@ class TestFlaskAPI(unittest.TestCase):
             mock_cursor2.__enter__.return_value = MagicMock()
             mock_cursor2.__enter__.return_value.execute = MagicMock()
             
-            mock_connect = MagicMock()
             mock_connect.return_value = MagicMock()
             mock_connect.return_value.cursor = MagicMock(side_effect=[mock_cursor1, mock_cursor2])
             
@@ -406,7 +411,7 @@ class TestFlaskAPI(unittest.TestCase):
             
             self.assertEqual(response1[1], 200)
             self.assertEqual(response1[0], json.dumps(expected1))
-            self.assertEqual(mock_stdout.get_value(), 'Aaron not registered in system.\n')
+            mock_print.assert_called_with('Aaron not registered in system.')
             
             # Case 2: Username already exists and is registered
             mock_cursor1 = MagicMock()
@@ -418,13 +423,14 @@ class TestFlaskAPI(unittest.TestCase):
             }
             mock_cursor1.__enter__.return_value.fetchone = MagicMock(return_value=fetchoneRet)
             
-            mock_connect = MagicMock()
+            
             mock_connect.return_value = MagicMock()
             mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor1)
+            mock_connect.return_value.commit = MagicMock()
             
             response2 = Log_User()
             
-            self.assertEqual(mock_stdout.get_value(), 'Aaron is in system.\n')
+            mock_print.assert_called_with('Aaron is in system.')
             
         # Case 3: username not provided in request
         with app.test_request_context(
