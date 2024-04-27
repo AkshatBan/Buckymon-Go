@@ -13,7 +13,7 @@ class TestFlaskAPI(unittest.TestCase):
         app.testing = True
         self.client = app.test_client()
 
-    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock    
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock    
     def test_get_list_of_locations(self, mock_connect):
         # setting up mock cursor with proper fetchone and fetchall results
         mock_cursor = MagicMock()
@@ -70,7 +70,7 @@ class TestFlaskAPI(unittest.TestCase):
         self.assertEqual(response, json.dumps(expected))
         
     # @patch('Frontend_To_Backend_Data_Passage.request') # replaces the request import with a mock import
-    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock    
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock    
     def test_complete_event(self, mock_connect):
         with app.test_request_context(
         "/api/Complete_Event", method="POST", json={"username": "Aaron",
@@ -124,7 +124,7 @@ class TestFlaskAPI(unittest.TestCase):
             self.assertEqual(response[0], json.dumps(expected))
     
     # @patch('Frontend_To_Backend_Data_Passage.request') # replaces the request import with a mock import
-    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock    
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock    
     def test_active_events(self, mock_connect):
         # replaces request.json function with a mock fcn that returns
         # hard-coded dict
@@ -179,7 +179,7 @@ class TestFlaskAPI(unittest.TestCase):
         
         
     # @patch('Frontend_To_Backend_Data_Passage.request') # replaces the request import with a mock import
-    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock 
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock 
     def test_get_user_achievements(self, mock_connect):
         # replaces request.json function with a mock fcn that returns
         # # hard-coded dict
@@ -290,7 +290,7 @@ class TestFlaskAPI(unittest.TestCase):
             }
             self.assertEqual(response[0], json.dumps(expected))
     
-    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock 
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock 
     def test_get_completed_events(self, mock_connect):
         with app.test_request_context(
         "/api/Get_Completed_Events", method="GET", json={"username": "Aaron"}
@@ -375,7 +375,7 @@ class TestFlaskAPI(unittest.TestCase):
             
             self.assertEqual(response, json.dumps(expected))
     
-    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock
     @patch('sys.stdout', new_callable=StringIO) # mock print() method
     def test_log_user(self, mock_connect, mock_stdout):
         with app.test_request_context(
