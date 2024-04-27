@@ -1,7 +1,7 @@
 import unittest
 from flask import url_for
 from unittest.mock import MagicMock, patch
-from Backend import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations, Get_Completed_Events
+from Backend import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations, Get_Completed_Events, Log_User
 import json
 
 # Uses python's unittest mocking library to mock requests to the client
@@ -373,6 +373,37 @@ class TestFlaskAPI(unittest.TestCase):
             
             
             self.assertEqual(response, json.dumps(expected))
+    
+    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock 
+    def test_log_user(self, mock_connect):
+        with app.test_request_context(
+        "/api/Log_User", method="POST", json={"username": "Aaron"}
+        ):
+            # Case 1: username doesn't already exist and is registered successfully
+            mock_cursor1 = MagicMock()
+            mock_cursor1.__enter__ = MagicMock()
+            mock_cursor1.__enter__.return_value = MagicMock()
+            mock_cursor1.__enter__.return_value.execute = MagicMock()
+            mock_cursor1.__enter__.return_value.fetchone = MagicMock(return_value=None)
+            
+            mock_cursor2 = MagicMock()
+            mock_cursor2.__enter__ = MagicMock()
+            mock_cursor2.__enter__.return_value = MagicMock()
+            mock_cursor2.__enter__.return_value.execute = MagicMock()
+            
+            mock_connect = MagicMock()
+            mock_connect.return_value = MagicMock()
+            mock_connect.return_value.cursor = MagicMock(side_effect=[mock_cursor1, mock_cursor2])
+            
+            response1 = Log_User()
+            
+            expected1 = {
+                "username": "Aaron",
+                "message": "successfully logged in"
+            }
+            
+            self.assertEqual(response1[1], 200)
+            self.assertEqual(response1[0], json.dumps(expected1))
 
 
 if __name__ == '__main__':
