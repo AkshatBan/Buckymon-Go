@@ -1,8 +1,9 @@
 import unittest
 from flask import url_for
 from unittest.mock import MagicMock, patch
-from Backend.py import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations
+from Backend import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations, Get_Completed_Events, Log_User
 import json
+from io import StringIO
 
 # Uses python's unittest mocking library to mock requests to the client
 class TestFlaskAPI(unittest.TestCase):
@@ -12,7 +13,7 @@ class TestFlaskAPI(unittest.TestCase):
         app.testing = True
         self.client = app.test_client()
 
-    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock    
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock    
     def test_get_list_of_locations(self, mock_connect):
         # setting up mock cursor with proper fetchone and fetchall results
         mock_cursor = MagicMock()
@@ -34,10 +35,12 @@ class TestFlaskAPI(unittest.TestCase):
         mock_cursor.fetchall = MagicMock(return_value=fetchallResult)
         fetchoneResults = [
             {
-                "e_desc": "House party"
+                "e_desc": "House party",
+                "e_id": 1
             },
             {
-                "e_desc": "Lamer house party"
+                "e_desc": "Lamer house party",
+                "e_id": 2
             }
         ]
         mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
@@ -56,20 +59,22 @@ class TestFlaskAPI(unittest.TestCase):
                 "lat": 10,
                 "long": 20,
                 "location_name": "My house",
-                "event_desc": "House party"
+                "event_desc": "House party",
+                "event_id": 1
             },
             {
                 "id": 2,
                 "lat": 11,
                 "long": 8,
                 "location_name": "Their house",
-                "event_desc": "Lamer house party"
+                "event_desc": "Lamer house party",
+                "event_id": 2
             }
         ]
         self.assertEqual(response, json.dumps(expected))
         
     # @patch('Frontend_To_Backend_Data_Passage.request') # replaces the request import with a mock import
-    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock    
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock    
     def test_complete_event(self, mock_connect):
         with app.test_request_context(
         "/api/Complete_Event", method="POST", json={"username": "Aaron",
@@ -123,7 +128,7 @@ class TestFlaskAPI(unittest.TestCase):
             self.assertEqual(response[0], json.dumps(expected))
     
     # @patch('Frontend_To_Backend_Data_Passage.request') # replaces the request import with a mock import
-    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock    
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock    
     def test_active_events(self, mock_connect):
         # replaces request.json function with a mock fcn that returns
         # hard-coded dict
@@ -162,6 +167,7 @@ class TestFlaskAPI(unittest.TestCase):
                     "long": -89,
                     "location_name": "Union South",
                     "event_score": 10, 
+                    "event_name": "four",
                     "event_description": "the number after three"
                 },
                 {
@@ -170,6 +176,7 @@ class TestFlaskAPI(unittest.TestCase):
                     "long": -89,
                     "location_name": "Bascom Hall",
                     "event_score": 20, 
+                    "event_name": "five",
                     "event_description": "the number after four"
                 }
             ]
@@ -178,7 +185,7 @@ class TestFlaskAPI(unittest.TestCase):
         
         
     # @patch('Frontend_To_Backend_Data_Passage.request') # replaces the request import with a mock import
-    @patch('Frontend_To_Backend_Data_Passage.pymysql.connect') # replaces pymysql connect import with a mock 
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock 
     def test_get_user_achievements(self, mock_connect):
         # replaces request.json function with a mock fcn that returns
         # # hard-coded dict
@@ -288,6 +295,151 @@ class TestFlaskAPI(unittest.TestCase):
                 "completed_achievements": completedAchievements
             }
             self.assertEqual(response[0], json.dumps(expected))
+    
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock 
+    def test_get_completed_events(self, mock_connect):
+        with app.test_request_context(
+        "/api/Get_Completed_Events", method="GET", json={"username": "Aaron"}
+        ):
+            mock_cursor = MagicMock()
+            mock_cursor.execute = MagicMock()
+            fetchoneResults = [
+                {
+                    "u_id": 1
+                },
+                {
+                    "l_lat": 5,
+                    "l_long": 7,
+                    "l_name": "This Street"
+                },
+                {
+                    "l_lat": 10,
+                    "l_long": 1,
+                    "l_name": "Other Street"
+                }
+            ]
+            
+            fetchallResults = [
+                [
+                    {
+                        "completes_e_id": 1
+                    },
+                    {
+                        "completes_e_id": 2
+                    }
+                ],
+                [
+                    {
+                        "e_id": 1,
+                        "e_score": 10,
+                        "e_name": "Dog!",
+                        "e_desc": "Pet a dog",
+                        "l_id": 1
+                    },
+                    {
+                        "e_id": 2,
+                        "e_score": 20,
+                        "e_name": "Cat!",
+                        "e_desc": "Pet a cat",
+                        "l_id": 2
+                    }
+                ]
+            ]
+            
+            mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
+            mock_cursor.fetchall = MagicMock(side_effect=fetchallResults)
+            mock_cursor.close = MagicMock()
+            
+            mock_connect.return_value = MagicMock()
+            mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
+            mock_connect.return_value.close = MagicMock()
+            
+            response = Get_Completed_Events()
+            
+            expected = [
+                    {
+                        "event_id": 1,
+                        "lat": 5,
+                        "long": 7,
+                        "location_name": "This Street",
+                        "event_score": 10,
+                        "event_name": "Dog!",
+                        "event_description": "Pet a dog"
+                    },
+                    {
+                        "event_id": 2,
+                        "lat": 10,
+                        "long": 1,
+                        "location_name": "Other Street",
+                        "event_score": 20,
+                        "event_name": "Cat!",
+                        "event_description": "Pet a cat"
+                    }
+                ]
+            
+            
+            
+            self.assertEqual(response, json.dumps(expected))
+    
+    @patch('builtins.print') # mock print() method
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock
+    def test_log_user(self, mock_connect, mock_print):
+        with app.test_request_context(
+        "/api/Log_User", method="POST", json={"username": "Aaron"}
+        ):
+            # Case 1: username doesn't already exist and is registered successfully
+            mock_cursor1 = MagicMock()
+            mock_cursor1.__enter__ = MagicMock()
+            mock_cursor1.__enter__.return_value = MagicMock()
+            mock_cursor1.__enter__.return_value.execute = MagicMock()
+            mock_cursor1.__enter__.return_value.fetchone = MagicMock(return_value=None)
+            
+            mock_cursor2 = MagicMock()
+            mock_cursor2.__enter__ = MagicMock()
+            mock_cursor2.__enter__.return_value = MagicMock()
+            mock_cursor2.__enter__.return_value.execute = MagicMock()
+            
+            mock_connect.return_value = MagicMock()
+            mock_connect.return_value.cursor = MagicMock(side_effect=[mock_cursor1, mock_cursor2])
+            
+            response1 = Log_User()
+            
+            expected1 = {
+                "username": "Aaron",
+                "message": "successfully logged in"
+            }
+            
+            self.assertEqual(response1[1], 200)
+            self.assertEqual(response1[0], json.dumps(expected1))
+            mock_print.assert_called_with('Aaron not registered in system.')
+            
+            # Case 2: Username already exists and is registered
+            mock_cursor1 = MagicMock()
+            mock_cursor1.__enter__ = MagicMock()
+            mock_cursor1.__enter__.return_value = MagicMock()
+            mock_cursor1.__enter__.return_value.execute = MagicMock()
+            fetchoneRet = {
+                "attribute": "blah blah"
+            }
+            mock_cursor1.__enter__.return_value.fetchone = MagicMock(return_value=fetchoneRet)
+            
+            
+            mock_connect.return_value = MagicMock()
+            mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor1)
+            mock_connect.return_value.commit = MagicMock()
+            
+            response2 = Log_User()
+            
+            mock_print.assert_called_with('Aaron is in system.')
+            
+        # Case 3: username not provided in request
+        with app.test_request_context(
+        "/api/Log_User", method="POST", json={"username": None}
+        ):
+            response3 = Log_User()
+            
+            self.assertEqual(response3[1], 400)
+            self.assertEqual(response3[0], json.dumps({'message': 'No username provided'}))
 
 
 if __name__ == '__main__':
