@@ -198,6 +198,7 @@ class TestFlaskAPI(unittest.TestCase):
             # Case 1: User has uncompleted achievements
             mock_cursor = MagicMock()
             mock_cursor.execute = MagicMock()
+            # Setting up mock data to be returned by fetchall() calls
             fetchallResults = [
                 {
                     "achieves_a_id": 1
@@ -213,6 +214,7 @@ class TestFlaskAPI(unittest.TestCase):
                 }
             ]
             
+            # Setting up mock data to be returned by fetchone() calls
             fetchoneResults = [
                 {
                     "u_id": 1
@@ -246,16 +248,21 @@ class TestFlaskAPI(unittest.TestCase):
                 }
             ]
             
+            # attaching mock fetchall() and fetchone() results to the mock cursor
             mock_cursor.fetchall = MagicMock(return_value=fetchallResults)
             mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
             mock_cursor.close = MagicMock()
             
+            # attaching the mock cursor to the mock connection returned by 
+            # pymysql.connect
             mock_connect.return_value = MagicMock()
             mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
             mock_connect.return_value.close = MagicMock()
             
             response1 = Get_User_Achievements()
             
+            # the achievements we expect to be completed based on the mock
+            # data defined
             complete_achievements = [
                 {
                 'achievement_id': 1,
@@ -289,6 +296,7 @@ class TestFlaskAPI(unittest.TestCase):
             'completed_achievements': complete_achievements
             }
             
+            # checking for success code
             self.assertEqual(response1[1], 200)
             self.assertEqual(response1[0], json.dumps(expected))
     
@@ -299,6 +307,7 @@ class TestFlaskAPI(unittest.TestCase):
         ):
             mock_cursor = MagicMock()
             mock_cursor.execute = MagicMock()
+            # setting up mock data to be returned by fetchone() calls
             fetchoneResults = [
                 {
                     "u_id": 1
@@ -315,6 +324,7 @@ class TestFlaskAPI(unittest.TestCase):
                 }
             ]
             
+            # setting up mock data to be returned by fetchall() calls
             fetchallResults = [
                 [
                     {
@@ -342,16 +352,22 @@ class TestFlaskAPI(unittest.TestCase):
                 ]
             ]
             
+            # attaching fetchall() and fetchone() mock data to the actual
+            # mock function calls
             mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
             mock_cursor.fetchall = MagicMock(side_effect=fetchallResults)
             mock_cursor.close = MagicMock()
             
+            # attaching the mock cursor to the mock connection returned by 
+            # pymysql.connect
             mock_connect.return_value = MagicMock()
             mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
             mock_connect.return_value.close = MagicMock()
             
             response = Get_Completed_Events()
             
+            # The expected completed event list based on the mock data defined 
+            # above
             expected = [
                     {
                         "event_id": 1,
@@ -384,22 +400,28 @@ class TestFlaskAPI(unittest.TestCase):
         "/api/Log_User?username=Aaron", method="POST", json={"username": "Aaron"}
         ):
             # Case 1: username doesn't already exist and is registered successfully
+            # setting up mock cursor which tries to query the non-existent user
             mock_cursor1 = MagicMock()
-            mock_cursor1.__enter__ = MagicMock()
+            mock_cursor1.__enter__ = MagicMock() # handles cursor calls within 'with' statements
             mock_cursor1.__enter__.return_value = MagicMock()
             mock_cursor1.__enter__.return_value.execute = MagicMock()
+            # have fetchone() return None to indicate username doesn't exist
             mock_cursor1.__enter__.return_value.fetchone = MagicMock(return_value=None)
             
+            # setting up mock cursor (the one used to register the user)
             mock_cursor2 = MagicMock()
             mock_cursor2.__enter__ = MagicMock()
+            # sets up this cursor to basically do nothing
             mock_cursor2.__enter__.return_value = MagicMock()
             mock_cursor2.__enter__.return_value.execute = MagicMock()
             
+            # attaching the mock cursor to the mock connection
             mock_connect.return_value = MagicMock()
             mock_connect.return_value.cursor = MagicMock(side_effect=[mock_cursor1, mock_cursor2])
             
             response1 = Log_User()
             
+            # expecting that Aaron was not previously registered
             expected1 = {
                 "username": "Aaron",
                 "message": "successfully logged in"
@@ -407,6 +429,8 @@ class TestFlaskAPI(unittest.TestCase):
             
             self.assertEqual(response1[1], 200)
             self.assertEqual(response1[0], json.dumps(expected1))
+            # ensure that a print call with this specific arg was made,
+            # which verifies that the username was not already registered
             mock_print.assert_called_with('Aaron not registered in system.')
             
             # Case 2: Username already exists and is registered
@@ -414,6 +438,7 @@ class TestFlaskAPI(unittest.TestCase):
             mock_cursor1.__enter__ = MagicMock()
             mock_cursor1.__enter__.return_value = MagicMock()
             mock_cursor1.__enter__.return_value.execute = MagicMock()
+            # have fetchone() return anything, as long as its not None
             fetchoneRet = {
                 "attribute": "blah blah"
             }
@@ -426,9 +451,11 @@ class TestFlaskAPI(unittest.TestCase):
             
             response2 = Log_User()
             
+            # method should print('Aaron is in system') in this case
             mock_print.assert_called_with('Aaron is in system.')
             
         # Case 3: username not provided in request
+        # don't provide a username in the url parameters
         with app.test_request_context(
         "/api/Log_User", method="POST", json={"username": None}
         ):
@@ -445,6 +472,9 @@ class TestFlaskAPI(unittest.TestCase):
             # Case 1: User has uncompleted achievements
             mock_cursor = MagicMock()
             mock_cursor.execute = MagicMock()
+            
+            # setting up mock data returned by fetchall()
+            # achievements with id 2 and 3 are intended to be the uncompleted ones
             fetchallResults = [
                 {
                     "a_id": 1
@@ -466,6 +496,8 @@ class TestFlaskAPI(unittest.TestCase):
                 }
             ]
             
+            # setting up mock data to be returned by fetchone() calls
+            # put a None in place of achievements 2 and 3 to indicate uncompleted
             fetchoneResults = [
                 {
                     "a_id": 1
@@ -477,16 +509,21 @@ class TestFlaskAPI(unittest.TestCase):
                 }
             ]
             
+            # attaching mock fetchall() and fetchone() return values to
+            # the actual mock function calls
             mock_cursor.fetchall = MagicMock(return_value=fetchallResults)
             mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
             mock_cursor.close = MagicMock()
             
+            # attaching the mock cursor to the mock connection created by
+            # pymysql.connect
             mock_connect.return_value = MagicMock()
             mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
             mock_connect.return_value.close = MagicMock()
             
             response1 = Get_Uncompleted_Achievements()
             
+            # the achievements we expect to be uncompleted based on the mock data
             uncomplete_achievements = [
                 {
                 'achievement_id': 2,
@@ -513,6 +550,7 @@ class TestFlaskAPI(unittest.TestCase):
             # Case 2: User has completed all achievements
             mock_cursor = MagicMock()
             mock_cursor.execute = MagicMock()
+            # setting up a bunch of sample achievements to be returned by fetchall()
             fetchallResults = [
                 {
                     "a_id": 1
@@ -534,6 +572,8 @@ class TestFlaskAPI(unittest.TestCase):
                 }
             ]
             
+            # setting up mock fetchone() return data that basically
+            # indicates all achievements are completed
             fetchoneResults = [
                 {
                     "a_id": 1
@@ -549,16 +589,20 @@ class TestFlaskAPI(unittest.TestCase):
                 }
             ]
             
+            # attaching above mock data to be returned by their corresponding functions
             mock_cursor.fetchall = MagicMock(return_value=fetchallResults)
             mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
             mock_cursor.close = MagicMock()
             
+            # attaching the mock cursor to the mock connection returned by
+            # pymysql.connect
             mock_connect.return_value = MagicMock()
             mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
             mock_connect.return_value.close = MagicMock()
             
             response2 = Get_Uncompleted_Achievements()
             
+            # should identify all achievments as completed based on the mock data
             expected = {
             'username': "Aaron",
             'completedAchievements': 'Great job! You\'ve completed everything!!!'
