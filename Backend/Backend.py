@@ -40,17 +40,15 @@ def Get_List_Of_Locations():
         dictionary['long'] = round(float(dictionary.pop("l_long")))
         dictionary['location_name'] = dictionary.pop("l_name")
 
-        #Adds an event description 
+        #Extracts the event description and event id that's associated with current location id
         query = 'SELECT e_desc, e_id FROM Events WHERE l_id = ' + str(dictionary['id'])
         cursor.execute(query) 
         descriptionAndId = cursor.fetchone()
                 
-        #Only adds it if it exists
+        #Only adds event description and event id if it exists
         if(descriptionAndId != None):
             dictionary['event_desc'] = descriptionAndId['e_desc']   
             dictionary['event_id'] = descriptionAndId['e_id'] 
-
-        #Adds event id
 
             
     #Closes cursor and connection at the end
