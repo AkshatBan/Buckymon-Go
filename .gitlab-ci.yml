@@ -18,10 +18,10 @@ build-frontend:
     - docker
   script:
     - echo "Building the frontend..."
-    - docker build -f frontend.dockerfile -t $DOCKER_REGISTRY/frontend:latest .
+    - docker build -f frontend.dockerfile -t $DOCKER_REGISTRY/frontend:cicd-build .
     - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
-    - docker push $DOCKER_REGISTRY/frontend:latest
-    - docker run $DOCKER_REGISTRY/frontend:latest sh -c "npm run"
+    - docker push $DOCKER_REGISTRY/frontend:cicd-build
+    - docker run $DOCKER_REGISTRY/frontend:cicd-build sh -c "npm run"
 
 build-backend:
   stage: build
@@ -72,8 +72,26 @@ test_frontend:
   #  - docker build -f frontend.dockerfile -t frontend:cicd-build .
    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
 
-   - docker pull $DOCKER_REGISTRY/frontend:frontend_cicd
-   - docker run $DOCKER_REGISTRY/frontend:frontend_cicd sh -c "CI=true npm test"
+   - docker pull $DOCKER_REGISTRY/frontend:cicd-build
+   - docker run $DOCKER_REGISTRY/frontend:cicd-build sh -c "CI=true npm test"
+
+
+deploy_frontend:
+  stage: deploy
+  when: on_success
+  image: docker:20.10.17
+  services:
+    - docker:20.10.17-dind
+  tags:
+    - dind
+    - csl
+    - docker
+  script:
+    - echo "Deploying Frontend..."
+    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+    - docker build -f frontend-deploy.dockerfile -t $DOCKER_REGISTRY/frontend:production .
+    - docker push $DOCKER_REGISTRY/frontend:production
+
 
 # Define job for deploying the application
 # deploy:
