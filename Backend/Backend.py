@@ -470,17 +470,17 @@ def Get_Uncompleted_Achievements():
                 'achievement_description': dictionary['a_desc']
             }
 
-        # Adds uncompleted achievement to the list to return as a result
-        uncompletedAchievements.append(uncompletedAchievement)       
+            # Adds uncompleted achievement to the list to return as a result
+            uncompletedAchievements.append(uncompletedAchievement)       
         # Otherwise, we check with the next achievement ID.   
                     
     #Closes cursor and connection
     cursor.close()
     connection.close()     
     # Checks if user has completed all achievements
-    if uncompletedAchievements == None:
+    if len(uncompletedAchievements) == 0:
         # User has completed all achievements
-        return json.dumps({'username': username, 'completedAchievements': 'Great job! You\'ve completed everything!!!'}, 400)        
+        return json.dumps({'username': username, 'completedAchievements': 'Great job! You\'ve completed everything!!!'}), 400        
     else:
         # Formats body to return as a result, assuming username and uncompleted achievements were extracted.
         result = {
