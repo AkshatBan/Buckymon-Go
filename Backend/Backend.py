@@ -135,14 +135,6 @@ def Complete_Event():
 #This method takes in a username and returns all the Events that the user has not yet completed
 @app.route('/api/Active_Events', methods = ['GET'])
 def Active_Events():
-    # userInfo = request.json
-
-    #For testing purposes
-    '''
-    userInfo =  {
-                    'username': 'Aaron'
-                }
-    '''
 
     userName = request.args.get("username")
     userId = 0
@@ -156,27 +148,27 @@ def Active_Events():
     
     cursor = connection.cursor()
 
-     #Gets the user id based on the user name
+    # Gets the user id based on the user name
     query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + userName + '\''
     cursor.execute(query)
     userDict = cursor.fetchone()
     userId = userDict['u_id']
 
-    #Now we get all user's completed event IDs 
+    # Now we get all user's completed event IDs 
     query = 'SELECT completes_e_id FROM Completes WHERE completes_u_id = ' + str(userId)
     cursor.execute(query)
     eventDict = cursor.fetchall()     
     
     
     
-    #Stores all completed Events in tuple for our query to database
+    # Stores all completed Events in tuple for our query to database
     completedEventsIDs = []
     for dictionary in eventDict:
         completedEventsIDs.append(dictionary['completes_e_id'])
 
-    #Changes completedEventIDs to a string with parantheses
+    # Changes completedEventIDs to a string with parantheses
     strRep = str(completedEventsIDs)
-    #Replaces the [] with () so it will work with my sql
+    # Replaces the [] with () so it will work with my sql
     strRep = '(' + strRep[1:len(strRep)-1:1] + ')'
 
     uncompletedEvents = {}
@@ -185,11 +177,11 @@ def Active_Events():
     cursor.execute(query)
     uncompletedEvents = cursor.fetchall()
 
-    #If the user has completed all events, then this should be empty, so we return 400
+    # If the user has completed all events, then this should be empty, so we return 400
     if bool(uncompletedEvents) == False:
         return 400
         
-    #Now builds final eventDict while also getting data from Locations table
+    # Now builds final eventDict while also getting data from Locations table
 
     for dictionary in uncompletedEvents:
         dictionary['event_id'] = dictionary.pop('e_id')
@@ -203,15 +195,15 @@ def Active_Events():
         dictionary['long'] = round(float(locationData['l_long']))
         dictionary['location_name'] = locationData['l_name']
 
-        #Switches name of Event score, Event Name, and Event Description
+        # Switches name of Event score, Event Name, and Event Description
         dictionary['event_score'] = dictionary.pop('e_score')
         dictionary['event_name'] = dictionary.pop('e_name')
         dictionary['event_description'] = dictionary.pop('e_desc')
 
-        #Gets rid of location id
+        # Gets rid of location id
         dictionary.pop('l_id')
 
-    #Closes cursor and connection
+    # Closes cursor and connection
     cursor.close()
     connection.close()
 
