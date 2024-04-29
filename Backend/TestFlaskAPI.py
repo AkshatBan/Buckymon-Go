@@ -1,7 +1,7 @@
 import unittest
 from flask import url_for
 from unittest.mock import MagicMock, patch
-from Backend import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations, Get_Completed_Events, Log_User
+from Backend import app, Complete_Event, Get_User_Achievements, Active_Events, Get_List_Of_Locations, Get_Completed_Events, Log_User, Get_Uncompleted_Achievements
 import json
 from io import StringIO
 
@@ -77,7 +77,7 @@ class TestFlaskAPI(unittest.TestCase):
     @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock    
     def test_complete_event(self, mock_connect):
         with app.test_request_context(
-        "/api/Complete_Event", method="POST", json={"username": "Aaron",
+        "/api/Complete_Event?username=Aaron&event_id=40000002", method="POST", json={"username": "Aaron",
                                                     "event_id": 40000002}
         ):
             data={"username": "Aaron", "event_id": 40000002}
@@ -134,7 +134,7 @@ class TestFlaskAPI(unittest.TestCase):
         # hard-coded dict
         # mock_request.json = MagicMock(return_value={"username": "Aaron"})
         with app.test_request_context(
-        "/api/Active_Events", method="GET", json={"username": "Aaron"}
+        "/api/Active_Events?username=Aaron", method="GET", json={"username": "Aaron"}
         ):
         
             # setting up the mock cursor with mock values and fcns
@@ -192,114 +192,110 @@ class TestFlaskAPI(unittest.TestCase):
         # mock_request.json = MagicMock(return_value={"username": "Aaron"})
         
         with app.test_request_context(
-        "/api/Get_User_Achievements", method="GET", json={"username": "Aaron"}
+        "/api/Get_User_Achievements?username=Aaron", method="GET", json={"username": "Aaron"}
         ):
         
-            # mock uses of connection.cursor() fcn and its execute, fetchone,
-            # and fetchall fcns
-            # mock_cursor1 mocks the first cursor() call
-            mock_cursor1 = MagicMock()
-            mock_cursor1.__enter__ = MagicMock()
-            mock_cursor1.__enter__.return_value = MagicMock()
-            mock_cursor1.__enter__.return_value.execute = MagicMock()
-            # mock cursor.fetchone, having it return hardcoded dict
-            mock_cursor1.__enter__.return_value.fetchone = MagicMock()
-            mock_cursor1.__enter__.return_value.fetchone.return_value = {"u_id": 1, "u_score": 30}
+            # Case 1: User has uncompleted achievements
+            mock_cursor = MagicMock()
+            mock_cursor.execute = MagicMock()
+            fetchallResults = [
+                {
+                    "achieves_a_id": 1
+                },
+                {
+                    "achieves_a_id": 2
+                },
+                {
+                    "achieves_a_id": 3
+                },
+                {
+                    "achieves_a_id": 4
+                }
+            ]
             
-            # mock_cursor2 mocks the second cursor() call
-            mock_cursor2 = MagicMock()
-            mock_cursor2.__enter__ = MagicMock()
-            mock_cursor2.__enter__.return_value = MagicMock()
-            mock_cursor2.__enter__.return_value.execute = MagicMock()
-            # mock cursor.fetchall, having it return list of hardcoded dict
-            dictList = []
-            dict1 = {"achieves_a_id": 1}
-            dict2 = {"achieves_a_id": 2}
-            dictList.append(dict1)
-            dictList.append(dict2)
-            fetchallMock = MagicMock(return_value=dictList)
-            mock_cursor2.__enter__.return_value.fetchall = fetchallMock
+            fetchoneResults = [
+                {
+                    "u_id": 1
+                },
+                {
+                    "u_score": 75
+                },
+                {
+                    "a_id": 1,
+                    "a_name": "Union Yums",
+                    "a_score": 5,
+                    "a_desc": "Get a meal at the union"
+                },
+                {
+                    "a_id": 2,
+                    "a_name": "Pet dog",
+                    "a_score": 10,
+                    "a_desc": "Pet any dog!"
+                },
+                {
+                    "a_id": 3,
+                    "a_name": "Pet a cat",
+                    "a_score": 20,
+                    "a_desc": "Pet a cat!"
+                },
+                {
+                    "a_id": 4,
+                    "a_name": "Abe's Foot",
+                    "a_score": 40,
+                    "a_desc": "Rub Abe's foot for good luck!"
+                }
+            ]
             
-            # mock_cursor3 mocks the third cursor() call (within the achieved loop)
-            mock_cursor3 = MagicMock()
-            mock_cursor3.__enter__ = MagicMock()
-            mock_cursor3.__enter__.return_value = MagicMock()
-            mock_cursor3.__enter__.return_value.execute = MagicMock()
-            # mock cursor.fetchone, having it return hardcoded dict
-            fetchoneMock = MagicMock(return_value={"a_id": 1, 
-                                                "a_name": "first",
-                                                "a_score": 10,
-                                                "a_desc": "first achev"})
-            mock_cursor3.__enter__.return_value.fetchone = fetchoneMock
+            mock_cursor.fetchall = MagicMock(return_value=fetchallResults)
+            mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
+            mock_cursor.close = MagicMock()
             
-            # mock_cursor4 mocks the fourth cursor() call 
-            # (2nd one within the achieved loop)
-            mock_cursor4 = MagicMock()
-            mock_cursor4.__enter__ = MagicMock()
-            mock_cursor4.__enter__.return_value = MagicMock()
-            mock_cursor4.__enter__.return_value.execute = MagicMock()
-            # mock cursor.fetchone, having it return hardcoded dict
-            fetchoneMock = MagicMock(return_value={"a_id": 2, 
-                                                "a_name": "second",
-                                                "a_score": 20,
-                                                "a_desc": "second achev"})
-            mock_cursor4.__enter__.return_value.fetchone = fetchoneMock
+            mock_connect.return_value = MagicMock()
+            mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
+            mock_connect.return_value.close = MagicMock()
             
-            # mocks connection(), having it return a different mock cursor 
-            # depending on when it is called
-            mock_conn1 = MagicMock()
-            mock_conn1.cursor = MagicMock(side_effect=[mock_cursor1, mock_cursor2])
-                
-            mock_conn2 = MagicMock()
-            mock_conn2.cursor = MagicMock(return_value=mock_cursor3)
-            mock_conn3 = MagicMock()
-            mock_conn3.cursor = MagicMock(return_value=mock_cursor4)
+            response1 = Get_User_Achievements()
             
-            cursorMocks = [mock_cursor1, mock_cursor2, mock_cursor3, mock_cursor4]
-            mockConnList = [mock_conn1, mock_conn2, mock_conn3]
-            # mock_connect.return_value = mock_conn1
-            mock_connect.side_effect = mockConnList
-            
-            # gets the response by calling the test client
-            # note: this response is not a mock
-            response = Get_User_Achievements()
-            
-            # assert that the retrieved response is successful
-            self.assertEqual(response[1], 200)
-            
-            # assert that connection() and cursor()
-            # functions were called the appropriate number of times
-            self.assertEqual(mock_connect.call_count, 3)
-            self.assertEqual(mock_conn1.cursor.call_count, 2)
-            self.assertEqual(mock_conn2.cursor.call_count, 1)
-            self.assertEqual(mock_conn3.cursor.call_count, 1)
-            
-            # check that we get the expected result
-            achiev1 = {
-                "achievement_id": 1,
-                "achievement_name": "first",
-                "achievement_score": 10,
-                "achievement_description": "first achev"
-            }
-            achiev2 = {
-                "achievement_id": 2,
-                "achievement_name": "second",
-                "achievement_score": 20,
-                "achievement_description": "second achev"
-            }
-            completedAchievements = [achiev1, achiev2]
+            complete_achievements = [
+                {
+                'achievement_id': 1,
+                'achievement_name': "Union Yums",
+                'achievement_score': 5,
+                'achievement_description': "Get a meal at the union"
+                },
+                {
+                'achievement_id': 2,
+                'achievement_name': "Pet dog",
+                'achievement_score': 10,
+                'achievement_description': "Pet any dog!"
+                },
+                {
+                'achievement_id': 3,
+                'achievement_name': "Pet a cat",
+                'achievement_score': 20,
+                'achievement_description': "Pet a cat!"
+                },
+                {
+                'achievement_id': 4,
+                'achievement_name': "Abe's Foot",
+                'achievement_score': 40,
+                'achievement_description': "Rub Abe's foot for good luck!"
+                }
+            ]
             
             expected = {
-                "username": "Aaron",
-                "user_score" : 30,
-                "completed_achievements": completedAchievements
+            'username': "Aaron",
+            'user_score': 75,
+            'completed_achievements': complete_achievements
             }
-            self.assertEqual(response[0], json.dumps(expected))
+            
+            self.assertEqual(response1[1], 200)
+            self.assertEqual(response1[0], json.dumps(expected))
     
     @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock 
     def test_get_completed_events(self, mock_connect):
         with app.test_request_context(
-        "/api/Get_Completed_Events", method="GET", json={"username": "Aaron"}
+        "/api/Get_Completed_Events?username=Aaron", method="GET", json={"username": "Aaron"}
         ):
             mock_cursor = MagicMock()
             mock_cursor.execute = MagicMock()
@@ -385,7 +381,7 @@ class TestFlaskAPI(unittest.TestCase):
     @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock
     def test_log_user(self, mock_connect, mock_print):
         with app.test_request_context(
-        "/api/Log_User", method="POST", json={"username": "Aaron"}
+        "/api/Log_User?username=Aaron", method="POST", json={"username": "Aaron"}
         ):
             # Case 1: username doesn't already exist and is registered successfully
             mock_cursor1 = MagicMock()
@@ -441,6 +437,135 @@ class TestFlaskAPI(unittest.TestCase):
             self.assertEqual(response3[1], 400)
             self.assertEqual(response3[0], json.dumps({'message': 'No username provided'}))
 
+    @patch('Backend.pymysql.connect') # replaces pymysql connect import with a mock 
+    def test_get_uncompleted_achievements(self, mock_connect):
+        with app.test_request_context(
+        "/api/Get_Uncompleted_Achievements?username=Aaron", method="GET", json={"username": "Aaron"}
+        ):
+            # Case 1: User has uncompleted achievements
+            mock_cursor = MagicMock()
+            mock_cursor.execute = MagicMock()
+            fetchallResults = [
+                {
+                    "a_id": 1
+                },
+                {
+                    "a_id": 2,
+                    "a_name": "Pet dog",
+                    "a_score": 10,
+                    "a_desc": "Pet any dog!"
+                },
+                {
+                    "a_id": 3,
+                    "a_name": "Pet a cat",
+                    "a_score": 20,
+                    "a_desc": "Pet a cat!"
+                },
+                {
+                    "a_id": 4
+                }
+            ]
+            
+            fetchoneResults = [
+                {
+                    "a_id": 1
+                },
+                None,
+                None,
+                {
+                    "a_id": 4
+                }
+            ]
+            
+            mock_cursor.fetchall = MagicMock(return_value=fetchallResults)
+            mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
+            mock_cursor.close = MagicMock()
+            
+            mock_connect.return_value = MagicMock()
+            mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
+            mock_connect.return_value.close = MagicMock()
+            
+            response1 = Get_Uncompleted_Achievements()
+            
+            uncomplete_achievements = [
+                {
+                'achievement_id': 2,
+                'achievement_name': "Pet dog",
+                'achievement_score': 10,
+                'achievement_description': "Pet any dog!"
+                },
+                {
+                'achievement_id': 3,
+                'achievement_name': "Pet a cat",
+                'achievement_score': 20,
+                'achievement_description': "Pet a cat!"
+                }
+            ]
+            
+            expected = {
+            'username': "Aaron",
+            'uncompleted_achievements': uncomplete_achievements
+            }
+            
+            self.assertEqual(response1[1], 200)
+            self.assertEqual(response1[0], json.dumps(expected))
+            
+            # Case 2: User has completed all achievements
+            mock_cursor = MagicMock()
+            mock_cursor.execute = MagicMock()
+            fetchallResults = [
+                {
+                    "a_id": 1
+                },
+                {
+                    "a_id": 2,
+                    "a_name": "Pet dog",
+                    "a_score": 10,
+                    "a_desc": "Pet any dog!"
+                },
+                {
+                    "a_id": 3,
+                    "a_name": "Pet a cat",
+                    "a_score": 20,
+                    "a_desc": "Pet a cat!"
+                },
+                {
+                    "a_id": 4
+                }
+            ]
+            
+            fetchoneResults = [
+                {
+                    "a_id": 1
+                },
+                {
+                    "a_id": 2
+                },
+                {
+                    "a_id": 3
+                },
+                {
+                    "a_id": 4
+                }
+            ]
+            
+            mock_cursor.fetchall = MagicMock(return_value=fetchallResults)
+            mock_cursor.fetchone = MagicMock(side_effect=fetchoneResults)
+            mock_cursor.close = MagicMock()
+            
+            mock_connect.return_value = MagicMock()
+            mock_connect.return_value.cursor = MagicMock(return_value=mock_cursor)
+            mock_connect.return_value.close = MagicMock()
+            
+            response2 = Get_Uncompleted_Achievements()
+            
+            expected = {
+            'username': "Aaron",
+            'completedAchievements': 'Great job! You\'ve completed everything!!!'
+            }
+            
+            self.assertEqual(response2[1], 400)
+            self.assertEqual(response2[0], json.dumps(expected))
 
 if __name__ == '__main__':
     unittest.main()
