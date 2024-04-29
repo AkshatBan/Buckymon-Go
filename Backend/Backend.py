@@ -66,14 +66,6 @@ def Get_List_Of_Locations():
 @app.route('/api/Complete_Event', methods=['POST'])
 def Complete_Event():
     userInfo = request.json
-    
-    #For Testing Purposes
-    '''
-    userInfo = { 
-                'username': 'Aaron',
-                'event_id': 40000002
-              }
-    '''
 
     userName = userInfo['username']
     eventId = userInfo['event_id']
@@ -92,17 +84,17 @@ def Complete_Event():
     cursor = connection.cursor()
 
     try: 
-        #First gets userID to write to the Completes Database
+        # First gets userID to write to the Completes Database
         query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + userName + '\''
         cursor.execute(query)
         result = cursor.fetchone()
         userId = result['u_id']
 
-        #Now writes to Completes database to signify that user Completed Event
+        # Now writes to Completes database to signify that user Completed Event
         query = 'INSERT INTO Completes (completes_u_id, completes_e_id) Values (' + str(userId) + ',' + str(eventId) + ')'
         cursor.execute(query)
 
-        #First reads the event score value
+        # First reads the event score value
         query = 'SELECT e_score FROM Events WHERE e_id = ' + str(eventId)
         cursor.execute(query)
         result = cursor.fetchone()
@@ -114,24 +106,24 @@ def Complete_Event():
         result = cursor.fetchone()
         userScore = result['u_score']    
 
-        #Now writes the new user score to the database
+        # Now writes the new user score to the database
         updatedScore = userScore + eventScore
 
-        #Now writes to User database their new score
+        # Now writes to User database their new score
         query = 'UPDATE User SET u_score = ' + str(updatedScore) + ' WHERE u_name = ' + '\'' + userName + '\''
         cursor.execute(query)
 
-        #Commit all changes 
+        # Commit all changes 
         connection.commit()
 
-    #This means that a duplicate UserID and EventID were sent in to Complete_Event, which the Frontend shouldn't do,
+    # This means that a duplicate UserID and EventID were sent in to Complete_Event, which the Frontend shouldn't do,
     # so there is an error on their part
     except Exception as e :
         print(f"An error occurred: {e}")
         return 400
 
     finally:
-        #Closes cursor and connection at the end no matter what happens 
+        # Closes cursor and connection at the end no matter what happens 
         cursor.close()
         connection.close()
 
