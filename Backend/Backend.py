@@ -394,15 +394,9 @@ def Get_User_Achievements():
 # }
 @app.route('/api/Get_Uncompleted_Achievements', methods=['GET'])
 def Get_Uncompleted_Achievements():
-    # Gets the information needed to create the returned JSON body.
-    # userInfo = request.json
-    '''
-    userInfo = {
-                'username': 'Aaron'
-               }
-    '''
+    # Gets the username upon a get request sent from the frontend.
     username = request.args.get("username")
-    # List of uncompleted achievements that will be updated unless user has completed all achievements
+    # List of uncompleted achievements that will be updated unless user has completed all achievements.
     uncompletedAchievements = []
 
     # Connects to the database.
@@ -413,13 +407,11 @@ def Get_Uncompleted_Achievements():
                                 cursorclass=cursorclass)
     cursor = connection.cursor()
 
-    # Makes the necessary queries to extract information.
-    # Gets all uncompleted achievements to return in JSON format
     # Gets all achievements to extract user's uncompleted achievements
     query = 'SELECT * FROM Achievements;'
     cursor.execute(query)
     achievements = cursor.fetchall()    
-    # Queries through all achievements to extract user's uncompleted achievements
+    # Checks each achievement to determine if user has completed that achievement, using Achieves table
     for dictionary in achievements:
         # References an achievement ID to extract current achievement in table
         achievementID = str(dictionary['a_id'])
@@ -429,7 +421,7 @@ def Get_Uncompleted_Achievements():
         currentResult = cursor.fetchone()
         # Checks if user completed that achievement
         if currentResult == None:
-            # User has not completed achievement
+            # User has not completed achievement, and is declared in the following format
             uncompletedAchievement = {
                 'achievement_id': dictionary['a_id'],
                 'achievement_name': dictionary['a_name'],
@@ -443,7 +435,8 @@ def Get_Uncompleted_Achievements():
                     
     #Closes cursor and connection
     cursor.close()
-    connection.close()     
+    connection.close()
+
     # Checks if user has completed all achievements
     if len(uncompletedAchievements) == 0:
         # User has completed all achievements
