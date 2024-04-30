@@ -328,14 +328,8 @@ def Log_User():
 @app.route('/api/Get_User_Achievements', methods=['GET'])
 def Get_User_Achievements():
     # Acquires username upon GET request
-    # userInfo = request.json
-    '''
-    userInfo = {
-                'username': 'Aaron'
-               }
-    '''
-
     userName = request.args.get("username")
+    # The total user score; is only 0 if user completed no achievements
     userScore = 0
     # Establishes a table that contain user's completed achievement(s) to reference
     completedAchievements = []
@@ -347,12 +341,12 @@ def Get_User_Achievements():
                                 cursorclass=cursorclass)
     cursor = connection.cursor()
 
-    # Obtains user score and user ID
     # Obtains user ID to reference when we extract user's completed achievements
     query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + userName + '\''
     cursor.execute(query)
     result = cursor.fetchone()
     userId = result['u_id']
+
     # References user score to put onto JSON body
     query = 'SELECT u_score FROM User WHERE u_name = ' + '\'' + userName + '\''
     cursor.execute(query)
@@ -363,6 +357,7 @@ def Get_User_Achievements():
     query = 'SELECT achieves_a_id FROM Achieves WHERE achieves_u_id = ' + '\'' + str(userId) + '\''
     cursor.execute(query)
     achieved = cursor.fetchall()     
+    
     # Queries through all achievements to extract user's completed achievements
     for dictionary in achieved:
         # References an achieved ID to extract user's completed achievement(s)
@@ -383,6 +378,7 @@ def Get_User_Achievements():
     #Closes cursor and connection
     cursor.close()
     connection.close()
+    
     # Formats the user's completed achievements data according to the API Documentation
     result = {
             'username': userName,
