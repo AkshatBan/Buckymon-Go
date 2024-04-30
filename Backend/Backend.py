@@ -285,7 +285,6 @@ def Get_Completed_Events():
 # When a user attempts to login, a POST request will be sent to the backend with the following body:
 # {
 #     username: 'user123'
-#     password: 'password123'
 # }
 @app.route('/api/Log_User', methods=['POST'])
 def Log_User():
@@ -294,7 +293,7 @@ def Log_User():
     username = userInfo['username']
 
     # Checks if username was not provided
-    if username == None: # TODO: Check if None or '' makes a difference in execution
+    if username == None:
         return json.dumps({'message': 'No username provided'}), 400
     
     # Establishes connection to database to conduct the necessary queries
@@ -305,23 +304,21 @@ def Log_User():
                                 cursorclass=cursorclass)
     with connection:
         with connection.cursor() as cursor:
+            # Finds the username in User if one exists
             query = 'SELECT * FROM User WHERE u_name = ' + '\'' + username + '\''
             cursor.execute(query)
             result = cursor.fetchone()
 
         # Checks if username is registered
         if result is None:
-            # TEST STATEMENT
-            print(f'{username} not registered in system.')
             
-            # Logs/registers new user
+            # Logs/registers new user if not in system
             with connection.cursor() as cursor:
                 query = 'INSERT INTO User (u_name, u_score) Values (' + username + ', 0'
                 cursor.execute(query)
                 connection.commit()
-        else:
-            print(f'{username} is in system.') # TEST STATEMENT
-            
+        
+        # Returns the following JSON body
         return json.dumps({'username': username, 'message': 'successfully logged in'}), 200
 
 # When the user logs in, a GET request will be sent to the backend with the following body:
