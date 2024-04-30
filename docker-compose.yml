@@ -1,13 +1,14 @@
 version: '3.8'
 services:
   frontend:
-    image: registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go/frontend:production
+    image: registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go/frontend:latest
     ports:
       - "3000:3000"
     depends_on:
       - backend
     environment:
       - REACT_APP_BACKEND_URL=http://backend:5000  # URL of the Flask backend service
+    command: npm start
   backend:
     image: registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go/backend:latest
     ports:
@@ -19,6 +20,7 @@ services:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=databasemysql
       - MYSQL_DB=Buckymon_Go_DB
+    command: python3 Backend.py
   mysql:
     image: registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go/database_docker_img:latest
     ports:

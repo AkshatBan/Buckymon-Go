@@ -1,7 +1,6 @@
 stages:
   - build
   - test
-  - deploy
 
 variables:
   DOCKER_REGISTRY: "registry.doit.wisc.edu/cdis/cs/courses/cs506/sp2024/team/mondaywednesdaylecture/t_01/buckymon-go"
@@ -19,10 +18,9 @@ build-frontend:
     - docker
   script:
     - echo "Building the frontend..."
-    - docker build -f frontend.dockerfile -t $DOCKER_REGISTRY/frontend:cicd-build .
-    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
-    - docker push $DOCKER_REGISTRY/frontend:cicd-build
-    - docker run $DOCKER_REGISTRY/frontend:cicd-build sh -c "npm run"
+    - docker build -f frontend.dockerfile -t $DOCKER_REGISTRY/frontend:latest .
+    - docker login -u bansal25 -p 'glpat-JkVQbWpnTqgY57hxnmdr' $DOCKER_REGISTRY
+    - docker push $DOCKER_REGISTRY/frontend:latest
 
 build-backend:
   stage: build
@@ -37,9 +35,8 @@ build-backend:
   script:
     - echo "Building the backend..."
     - docker build -f backend.dockerfile -t $DOCKER_REGISTRY/backend:latest .
-    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+    - docker login -u bansal25 -p 'glpat-JkVQbWpnTqgY57hxnmdr' $DOCKER_REGISTRY
     - docker push $DOCKER_REGISTRY/backend:latest
-    # - docker run backend:cicd-build sh -c "python3 Backend.py"
 
 build-database:
   stage: build
@@ -54,7 +51,7 @@ build-database:
   script:
     - echo "Building the database..."
     - docker build -f database.dockerfile -t $DOCKER_REGISTRY/database_docker_img:latest .
-    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+    - docker login -u bansal25 -p 'glpat-JkVQbWpnTqgY57hxnmdr' $DOCKER_REGISTRY
     - docker push $DOCKER_REGISTRY/database_docker_img:latest
 
 # Frontend and Backend Unit Testing
@@ -62,46 +59,31 @@ test_frontend:
   stage: test
   image: docker:20.10.17
   services:
-    - docker:20.10.17-dind
+    - name: docker:20.10.17-dind
+      alias: docker
   tags:
     - dind
     - csl
     - docker
   script:
    - echo "Testing frontend..."
-  #  - docker pull frontend:cicd-build
-  #  - docker build -f frontend.dockerfile -t frontend:cicd-build .
-   - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
-
-   - docker pull $DOCKER_REGISTRY/frontend:cicd-build
-   - docker run $DOCKER_REGISTRY/frontend:cicd-build sh -c "CI=true npm test"
+   - docker login -u bansal25 -p 'glpat-JkVQbWpnTqgY57hxnmdr' $DOCKER_REGISTRY
+   - docker pull $DOCKER_REGISTRY/frontend:latest
+   - docker run $DOCKER_REGISTRY/frontend:latest sh -c "CI=true npm test"
 
 
-deploy_frontend:
-  stage: deploy
-  when: on_success
-  image: docker:20.10.17
-  services:
-    - docker:20.10.17-dind
-  tags:
-    - dind
-    - csl
-    - docker
-  script:
-    - echo "Deploying Frontend..."
-    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
-    - docker build -f frontend-deploy.dockerfile -t $DOCKER_REGISTRY/frontend:production .
-    - docker push $DOCKER_REGISTRY/frontend:production
-
-
-# Define job for deploying the application
-# deploy:
+# deploy_frontend:
 #   stage: deploy
+#   when: on_success
+#   image: docker:20.10.17
+#   services:
+#     - docker:20.10.17-dind
+#   tags:
+#     - dind
+#     - csl
+#     - docker
 #   script:
-#     - echo "Deploying application..."
-#     # Add commands to deploy your application here
-#   environment:
-#     name: production
-#     url: "https://yourapp.com"
-#   only:
-#     - main
+#     - echo "Deploying Frontend..."
+#     - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+#     - docker build -f frontend-deploy.dockerfile -t $DOCKER_REGISTRY/frontend:production .
+#     - docker push $DOCKER_REGISTRY/frontend:production
