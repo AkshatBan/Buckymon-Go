@@ -40,17 +40,15 @@ def Get_List_Of_Locations():
         dictionary['long'] = round(float(dictionary.pop("l_long")))
         dictionary['location_name'] = dictionary.pop("l_name")
 
-        #Adds an event description 
+        #Extracts the event description and event id that's associated with current location id
         query = 'SELECT e_desc, e_id FROM Events WHERE l_id = ' + str(dictionary['id'])
         cursor.execute(query) 
         descriptionAndId = cursor.fetchone()
                 
-        #Only adds it if it exists
+        #Only adds event description and event id if it exists
         if(descriptionAndId != None):
             dictionary['event_desc'] = descriptionAndId['e_desc']   
             dictionary['event_id'] = descriptionAndId['e_id'] 
-
-        #Adds event id
 
             
     #Closes cursor and connection at the end
@@ -68,14 +66,6 @@ def Get_List_Of_Locations():
 @app.route('/api/Complete_Event', methods=['POST'])
 def Complete_Event():
     userInfo = request.json
-    
-    #For Testing Purposes
-    '''
-    userInfo = { 
-                'username': 'Aaron',
-                'event_id': 40000002
-              }
-    '''
 
     userName = userInfo['username']
     eventId = userInfo['event_id']
@@ -94,17 +84,17 @@ def Complete_Event():
     cursor = connection.cursor()
 
     try: 
-        #First gets userID to write to the Completes Database
+        # First gets userID to write to the Completes Database
         query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + userName + '\''
         cursor.execute(query)
         result = cursor.fetchone()
         userId = result['u_id']
 
-        #Now writes to Completes database to signify that user Completed Event
+        # Now writes to Completes database to signify that user Completed Event
         query = 'INSERT INTO Completes (completes_u_id, completes_e_id) Values (' + str(userId) + ',' + str(eventId) + ')'
         cursor.execute(query)
 
-        #First reads the event score value
+        # First reads the event score value
         query = 'SELECT e_score FROM Events WHERE e_id = ' + str(eventId)
         cursor.execute(query)
         result = cursor.fetchone()
@@ -116,24 +106,24 @@ def Complete_Event():
         result = cursor.fetchone()
         userScore = result['u_score']    
 
-        #Now writes the new user score to the database
+        # Now writes the new user score to the database
         updatedScore = userScore + eventScore
 
-        #Now writes to User database their new score
+        # Now writes to User database their new score
         query = 'UPDATE User SET u_score = ' + str(updatedScore) + ' WHERE u_name = ' + '\'' + userName + '\''
         cursor.execute(query)
 
-        #Commit all changes 
+        # Commit all changes 
         connection.commit()
 
-    #This means that a duplicate UserID and EventID were sent in to Complete_Event, which the Frontend shouldn't do,
+    # This means that a duplicate UserID and EventID were sent in to Complete_Event, which the Frontend shouldn't do,
     # so there is an error on their part
     except Exception as e :
         print(f"An error occurred: {e}")
         return 400
 
     finally:
-        #Closes cursor and connection at the end no matter what happens 
+        # Closes cursor and connection at the end no matter what happens 
         cursor.close()
         connection.close()
 
@@ -145,14 +135,6 @@ def Complete_Event():
 #This method takes in a username and returns all the Events that the user has not yet completed
 @app.route('/api/Active_Events', methods = ['GET'])
 def Active_Events():
-    # userInfo = request.json
-
-    #For testing purposes
-    '''
-    userInfo =  {
-                    'username': 'Aaron'
-                }
-    '''
 
     userName = request.args.get("username")
     userId = 0
@@ -166,27 +148,27 @@ def Active_Events():
     
     cursor = connection.cursor()
 
-     #Gets the user id based on the user name
+    # Gets the user id based on the user name
     query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + userName + '\''
     cursor.execute(query)
     userDict = cursor.fetchone()
     userId = userDict['u_id']
 
-    #Now we get all user's completed event IDs 
+    # Now we get all user's completed event IDs 
     query = 'SELECT completes_e_id FROM Completes WHERE completes_u_id = ' + str(userId)
     cursor.execute(query)
     eventDict = cursor.fetchall()     
     
     
     
-    #Stores all completed Events in tuple for our query to database
+    # Stores all completed Events in tuple for our query to database
     completedEventsIDs = []
     for dictionary in eventDict:
         completedEventsIDs.append(dictionary['completes_e_id'])
 
-    #Changes completedEventIDs to a string with parantheses
+    # Changes completedEventIDs to a string with parantheses
     strRep = str(completedEventsIDs)
-    #Replaces the [] with () so it will work with my sql
+    # Replaces the [] with () so it will work with my sql
     strRep = '(' + strRep[1:len(strRep)-1:1] + ')'
 
     uncompletedEvents = {}
@@ -195,11 +177,11 @@ def Active_Events():
     cursor.execute(query)
     uncompletedEvents = cursor.fetchall()
 
-    #If the user has completed all events, then this should be empty, so we return 400
+    # If the user has completed all events, then this should be empty, so we return 400
     if bool(uncompletedEvents) == False:
         return 400
         
-    #Now builds final eventDict while also getting data from Locations table
+    # Now builds final eventDict while also getting data from Locations table
 
     for dictionary in uncompletedEvents:
         dictionary['event_id'] = dictionary.pop('e_id')
@@ -213,31 +195,23 @@ def Active_Events():
         dictionary['long'] = round(float(locationData['l_long']))
         dictionary['location_name'] = locationData['l_name']
 
-        #Switches name of Event score, Event Name, and Event Description
+        # Switches name of Event score, Event Name, and Event Description
         dictionary['event_score'] = dictionary.pop('e_score')
         dictionary['event_name'] = dictionary.pop('e_name')
         dictionary['event_description'] = dictionary.pop('e_desc')
 
-        #Gets rid of location id
+        # Gets rid of location id
         dictionary.pop('l_id')
 
-    #Closes cursor and connection
+    # Closes cursor and connection
     cursor.close()
     connection.close()
 
     return json.dumps(uncompletedEvents)
 
-#This method takes in a username and returns all the Events that the user has not yet completed
+# This method takes in a username and returns all the Events that the user has not yet completed
 @app.route('/api/Get_Completed_Events', methods = ['GET'])
 def Get_Completed_Events():
-    # userInfo = request.json
-    
-    #For testing purposes
-    '''
-    userInfo =  {
-                    'username': 'Aaron'
-                }
-    '''
 
     userName = request.args.get("username")
     userId = 0
@@ -251,29 +225,29 @@ def Get_Completed_Events():
     
     cursor = connection.cursor()
 
-    #Gets the user id based on the user name
+    # Gets the user id based on the user name
     query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + userName + '\''
     cursor.execute(query)
     userDict = cursor.fetchone()
     userId = userDict['u_id']
         
-    #Now we get all user's completed event IDs 
+    # Now we get all user's completed event IDs 
     query = 'SELECT completes_e_id FROM Completes WHERE completes_u_id = ' + str(userId)
     cursor.execute(query)
     eventDict = cursor.fetchall()
         
-    #If the user has completed no events, then return code 400. eventdict will be False if it's empty
+    # If the user has completed no events, then return code 400. eventdict will be False if it's empty
     if bool(eventDict) == False:
         return 400
 
-    #Stores all completed Events in tuple for our query to database
+    # Stores all completed Events in tuple for our query to database
     completedEventsIDs = []
     for dictionary in eventDict:
         completedEventsIDs.append(dictionary['completes_e_id'])
 
-    #Changes completedEventIDs to a string with parantheses
+    # Changes completedEventIDs to a string with parantheses
     strRep = str(completedEventsIDs)
-    #Replaces the [] with () so it will work with my sql
+    # Replaces the [] with () so it will work with my sql
     strRep = '(' + strRep[1:len(strRep)-1:1] + ')'
 
     completedEvents = {}
@@ -281,7 +255,7 @@ def Get_Completed_Events():
     cursor.execute(query)
     completedEvents = cursor.fetchall()
         
-    #Now builds final eventDict while also getting data from Locations table
+    # Now builds final eventDict while also getting data from Locations table
     for dictionary in completedEvents:
         dictionary['event_id'] = dictionary.pop('e_id')
 
@@ -294,15 +268,15 @@ def Get_Completed_Events():
         dictionary['long'] = round(float(locationData['l_long']))
         dictionary['location_name'] = locationData['l_name']
 
-        #Switches name of Event score, Event Name, and Event Description
+        # Switches name of Event score, Event Name, and Event Description
         dictionary['event_score'] = dictionary.pop('e_score')
         dictionary['event_name'] = dictionary.pop('e_name')
         dictionary['event_description'] = dictionary.pop('e_desc')
 
-        #Gets rid of location id
+        # Gets rid of location id
         dictionary.pop('l_id')
 
-    #Closes cursor and connection
+    # Closes cursor and connection
     cursor.close()
     connection.close()
 
@@ -311,7 +285,6 @@ def Get_Completed_Events():
 # When a user attempts to login, a POST request will be sent to the backend with the following body:
 # {
 #     username: 'user123'
-#     password: 'password123'
 # }
 @app.route('/api/Log_User', methods=['POST'])
 def Log_User():
@@ -320,7 +293,7 @@ def Log_User():
     username = userInfo['username']
 
     # Checks if username was not provided
-    if username == None: # TODO: Check if None or '' makes a difference in execution
+    if username == None:
         return json.dumps({'message': 'No username provided'}), 400
     
     # Establishes connection to database to conduct the necessary queries
@@ -331,23 +304,21 @@ def Log_User():
                                 cursorclass=cursorclass)
     with connection:
         with connection.cursor() as cursor:
+            # Finds the username in User if one exists
             query = 'SELECT * FROM User WHERE u_name = ' + '\'' + username + '\''
             cursor.execute(query)
             result = cursor.fetchone()
 
         # Checks if username is registered
         if result is None:
-            # TEST STATEMENT
-            print(f'{username} not registered in system.')
             
-            # Logs/registers new user
+            # Logs/registers new user if not in system
             with connection.cursor() as cursor:
                 query = 'INSERT INTO User (u_name, u_score) Values (' + username + ', 0'
                 cursor.execute(query)
                 connection.commit()
-        else:
-            print(f'{username} is in system.') # TEST STATEMENT
-            
+        
+        # Returns the following JSON body
         return json.dumps({'username': username, 'message': 'successfully logged in'}), 200
 
 # When the user logs in, a GET request will be sent to the backend with the following body:
@@ -357,14 +328,8 @@ def Log_User():
 @app.route('/api/Get_User_Achievements', methods=['GET'])
 def Get_User_Achievements():
     # Acquires username upon GET request
-    # userInfo = request.json
-    '''
-    userInfo = {
-                'username': 'Aaron'
-               }
-    '''
-
     userName = request.args.get("username")
+    # The total user score; is only 0 if user completed no achievements
     userScore = 0
     # Establishes a table that contain user's completed achievement(s) to reference
     completedAchievements = []
@@ -376,12 +341,12 @@ def Get_User_Achievements():
                                 cursorclass=cursorclass)
     cursor = connection.cursor()
 
-    # Obtains user score and user ID
     # Obtains user ID to reference when we extract user's completed achievements
     query = 'SELECT u_id FROM User WHERE u_name = ' + '\'' + userName + '\''
     cursor.execute(query)
     result = cursor.fetchone()
     userId = result['u_id']
+
     # References user score to put onto JSON body
     query = 'SELECT u_score FROM User WHERE u_name = ' + '\'' + userName + '\''
     cursor.execute(query)
@@ -392,6 +357,7 @@ def Get_User_Achievements():
     query = 'SELECT achieves_a_id FROM Achieves WHERE achieves_u_id = ' + '\'' + str(userId) + '\''
     cursor.execute(query)
     achieved = cursor.fetchall()     
+    
     # Queries through all achievements to extract user's completed achievements
     for dictionary in achieved:
         # References an achieved ID to extract user's completed achievement(s)
@@ -412,6 +378,7 @@ def Get_User_Achievements():
     #Closes cursor and connection
     cursor.close()
     connection.close()
+    
     # Formats the user's completed achievements data according to the API Documentation
     result = {
             'username': userName,
@@ -427,15 +394,9 @@ def Get_User_Achievements():
 # }
 @app.route('/api/Get_Uncompleted_Achievements', methods=['GET'])
 def Get_Uncompleted_Achievements():
-    # Gets the information needed to create the returned JSON body.
-    # userInfo = request.json
-    '''
-    userInfo = {
-                'username': 'Aaron'
-               }
-    '''
+    # Gets the username upon a get request sent from the frontend.
     username = request.args.get("username")
-    # List of uncompleted achievements that will be updated unless user has completed all achievements
+    # List of uncompleted achievements that will be updated unless user has completed all achievements.
     uncompletedAchievements = []
 
     # Connects to the database.
@@ -446,13 +407,11 @@ def Get_Uncompleted_Achievements():
                                 cursorclass=cursorclass)
     cursor = connection.cursor()
 
-    # Makes the necessary queries to extract information.
-    # Gets all uncompleted achievements to return in JSON format
     # Gets all achievements to extract user's uncompleted achievements
     query = 'SELECT * FROM Achievements;'
     cursor.execute(query)
     achievements = cursor.fetchall()    
-    # Queries through all achievements to extract user's uncompleted achievements
+    # Checks each achievement to determine if user has completed that achievement, using Achieves table
     for dictionary in achievements:
         # References an achievement ID to extract current achievement in table
         achievementID = str(dictionary['a_id'])
@@ -462,7 +421,7 @@ def Get_Uncompleted_Achievements():
         currentResult = cursor.fetchone()
         # Checks if user completed that achievement
         if currentResult == None:
-            # User has not completed achievement
+            # User has not completed achievement, and is declared in the following format
             uncompletedAchievement = {
                 'achievement_id': dictionary['a_id'],
                 'achievement_name': dictionary['a_name'],
@@ -476,7 +435,8 @@ def Get_Uncompleted_Achievements():
                     
     #Closes cursor and connection
     cursor.close()
-    connection.close()     
+    connection.close()
+
     # Checks if user has completed all achievements
     if len(uncompletedAchievements) == 0:
         # User has completed all achievements
