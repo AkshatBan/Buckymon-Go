@@ -59,22 +59,22 @@ function LogInScreen(props){
         props.Set_Logged_In(true)
         props.Set_Current_User(username)
 
-        // fetch("http://127.0.0.1:5000/api/Login_User", {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({
-        //         username: username
-        //     })
-        // })
-        // .then(res => {
-        //     if(res.status === 200){
-        //         alert("Successfully Logged In!")
-        //         props.Set_Current_User(username)
-        //         props.Set_Logged_In(true)
-        //     }
-        // })
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/Log_User`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username
+            })
+        })
+        .then(res => {
+            if(res.status === 200){
+                alert("Successfully Logged In!")
+                props.Set_Current_User(username)
+                props.Set_Logged_In(true)
+            }
+        })
         Set_Username('')
     };
     

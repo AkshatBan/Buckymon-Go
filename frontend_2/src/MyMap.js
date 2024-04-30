@@ -237,7 +237,7 @@ function MyMap(props){
     //fetch location data on component load
 
     const Fetch_Locations = async () =>{
-        const res = await fetch("http://127.0.0.1:5000/api/Get_List_Of_Locations", {
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/Get_List_Of_Locations`, {
             method: "GET"
         })
         const data = await res.json()
@@ -249,7 +249,7 @@ function MyMap(props){
         let query = Object.keys(params)
                           .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
                           .join('&')
-        let url = "http://127.0.0.1:5000/api/Get_Completed_Events?" + query
+        let url = `${process.env.REACT_APP_BACKEND_URL}/api/Get_Completed_Events?` + query
         const res = await fetch(url, {
             method: "GET",
             headers: {
@@ -272,7 +272,7 @@ function MyMap(props){
         let query = Object.keys(params)
                           .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
                           .join('&')
-        let url = "http://127.0.0.1:5000/api/Active_Events?" + query
+        let url = `${process.env.REACT_APP_BACKEND_URL}/api/Active_Events?` + query
         const res = await fetch(url, {
             method: "GET",
             headers: {
@@ -295,7 +295,7 @@ function MyMap(props){
         let query = Object.keys(params)
                           .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
                           .join('&')
-        let url = "http://127.0.0.1:5000/api/Get_User_Achievements?" + query
+        let url = `${process.env.REACT_APP_BACKEND_URL}/api/Get_User_Achievements?` + query
         const res = await fetch(url, {
             method: "GET",
             headers: {
