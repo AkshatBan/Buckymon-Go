@@ -19,7 +19,7 @@ build-frontend:
   script:
     - echo "Building the frontend..."
     - docker build -f frontend.dockerfile -t $DOCKER_REGISTRY/frontend:latest .
-    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+    - docker login -u bansal25 -p 'glpat-JkVQbWpnTqgY57hxnmdr' $DOCKER_REGISTRY
     - docker push $DOCKER_REGISTRY/frontend:latest
 
 build-backend:
@@ -35,7 +35,7 @@ build-backend:
   script:
     - echo "Building the backend..."
     - docker build -f backend.dockerfile -t $DOCKER_REGISTRY/backend:latest .
-    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+    - docker login -u bansal25 -p 'glpat-JkVQbWpnTqgY57hxnmdr' $DOCKER_REGISTRY
     - docker push $DOCKER_REGISTRY/backend:latest
 
 build-database:
@@ -51,7 +51,7 @@ build-database:
   script:
     - echo "Building the database..."
     - docker build -f database.dockerfile -t $DOCKER_REGISTRY/database_docker_img:latest .
-    - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+    - docker login -u bansal25 -p 'glpat-JkVQbWpnTqgY57hxnmdr' $DOCKER_REGISTRY
     - docker push $DOCKER_REGISTRY/database_docker_img:latest
 
 # Frontend and Backend Unit Testing
@@ -67,7 +67,7 @@ test_frontend:
     - docker
   script:
    - echo "Testing frontend..."
-   - docker login -u gghall -p 'glpat-bNrAsSpJyX5Stkq8dk-y' $DOCKER_REGISTRY
+   - docker login -u bansal25 -p 'glpat-JkVQbWpnTqgY57hxnmdr' $DOCKER_REGISTRY
    - docker pull $DOCKER_REGISTRY/frontend:latest
    - docker run $DOCKER_REGISTRY/frontend:latest sh -c "CI=true npm test"
 
