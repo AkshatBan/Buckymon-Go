@@ -51,7 +51,7 @@ function MyMarker(props){
     // asynchronous function because post request takes time
     const Handle_Complete = async () => {
         try {
-            const response = await fetch("http://127.0.0.1:5000/api/Complete_Event", {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/Complete_Event`, {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json'
